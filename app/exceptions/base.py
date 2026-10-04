@@ -1,10 +1,10 @@
-class EmailAlreadyExistsError:
+class EmailAlreadyExistsError(Exception):
     pass
 
 
-class UsernameAlreadyExistsError:
+class UsernameAlreadyExistsError(Exception):
     pass
 
 
-class UnknownUserCreateError:
+class UnknownUserCreateError(Exception):
     pass
