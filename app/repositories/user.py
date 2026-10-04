@@ -10,18 +10,16 @@ from app.schemas.user import UserCreate
 
 
 class UserDatabase:
-    def __init__(self, session: Session):
-        self.session = session
-
-    def add_user_to_db(self, user_data: UserCreate):
+    @staticmethod
+    def add_user_to_db(session: Session, user_data: UserCreate):
         try:
             statement_check_email = select(user.User).where(user.User.email == user_data.email)
-            check_user_email_exists = self.session.scalar(statement_check_email)
+            check_user_email_exists = session.scalar(statement_check_email)
             if check_user_email_exists is not None:
                 raise EmailAlreadyExistsError
 
             statement_check_username = select(user.User).where(user.User.username == user_data.username)
-            check_user_username_exists = self.session.scalar(statement_check_username)
+            check_user_username_exists = session.scalar(statement_check_username)
             if check_user_username_exists is not None:
                 raise UsernameAlreadyExistsError
 
@@ -31,12 +29,12 @@ class UserDatabase:
                 password_hash=user_data.password_hash,
             )
 
-            self.session.add(user_to_db)
-            self.session.commit()
-            self.session.refresh(user)
+            session.add(user_to_db)
+            session.commit()
+            session.refresh(user_to_db)
 
-            return user
+            return user_to_db
 
-        except Exception:
-            self.session.rollback()
-            raise
+        except Exception as e:
+            session.rollback()
+            raise e
