@@ -19,7 +19,7 @@ class User(Base):
 
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
 
-    password_hash = Mapped[str]
+    password_hash: Mapped[str] = mapped_column(nullable=False)
 
     role: Mapped[str] = mapped_column(nullable=False, default="user")
     
