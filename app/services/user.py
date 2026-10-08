@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.user import User
 from app.exceptions.base import UnknownUserCreateError
@@ -8,10 +8,10 @@ from app.security.password import hash_password
 
 
 class UserService:
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def create_user(self, user_data: UserCreate):
+    async def create_user(self, user_data: UserCreate):
         password_hash = hash_password(user_data.password)
 
         user_data_to_db = User(
@@ -20,7 +20,7 @@ class UserService:
             password_hash=password_hash,
         )
 
-        created_user = UserDatabase.add_user_to_db(self.session, user_data_to_db)
+        created_user = await UserDatabase.add_user_to_db(self.session, user_data_to_db)
 
         if not created_user:
             raise UnknownUserCreateError

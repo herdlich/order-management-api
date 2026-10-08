@@ -15,9 +15,9 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/register", response_model=UserResponse, summary="Sign UP")
-def create_user_endpoint(data: UserCreate, service: Annotated[UserService, Depends(get_user_service)]):
+async def create_user_endpoint(data: UserCreate, service: Annotated[UserService, Depends(get_user_service)]):
     try:
-        return service.create_user(data)
+        return await service.create_user(data)
 
     except EmailAlreadyExistsError:
         raise HTTPException(
