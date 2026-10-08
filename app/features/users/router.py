@@ -8,8 +8,8 @@ from app.exceptions.base import (
     UnknownUserCreateError,
     UsernameAlreadyExistsError,
 )
-from app.schemas.user import UserCreate, UserResponse
-from app.services.user import UserService
+from app.features.users.schemas import UserCreate, UserResponse
+from app.features.users.services import UserService
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

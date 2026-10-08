@@ -6,7 +6,8 @@ from sqlalchemy import create_engine, pool
 
 from alembic import context
 from app.db.base import Base
-from app.db.models import product, user
+from app.features.products import models
+from app.features.users import models
 
 load_dotenv("app/.env")
 

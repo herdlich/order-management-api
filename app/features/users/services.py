@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models.user import User
 from app.exceptions.base import UnknownUserCreateError
-from app.repositories.user import UserDatabase
-from app.schemas.user import UserCreate
+from app.features.users.models import User
+from app.features.users.repository import UserDatabase
+from app.features.users.schemas import UserCreate
 from app.security.password import hash_password
 
 

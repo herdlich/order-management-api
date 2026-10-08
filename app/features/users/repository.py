@@ -1,12 +1,12 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import user
 from app.exceptions.base import (
     EmailAlreadyExistsError,
     UsernameAlreadyExistsError,
 )
-from app.schemas.user import UserCreate
+from app.features.users import models as user
+from app.features.users.schemas import UserCreate
 
 
 class UserDatabase:

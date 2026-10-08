@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import user
+from app.features.users import router as user
 
 app = FastAPI(
     title="Order Management API",
