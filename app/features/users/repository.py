@@ -3,10 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions.base import (
     EmailAlreadyExistsError,
+    InvalidCredentialsError,
     UsernameAlreadyExistsError,
 )
 from app.features.users import models as user
-from app.features.users.schemas import UserCreate
+from app.features.users.schemas import UserCreate, UserLogin
+from app.security.password import verify_password
 
 
 class UserDatabase:
@@ -32,3 +34,16 @@ class UserDatabase:
         except Exception as e:
             await session.rollback()
             raise e
+
+    @staticmethod
+    async def check_user_login(session: AsyncSession, user_model: UserLogin):
+        statement_check_username = select(user.User).where(user.User.username == user_model.username)
+        user_exists = await session.scalar(statement_check_username)
+
+        if user_exists is None or not verify_password(
+            user_model.password, 
+            user_exists.password_hash
+        ):
+            return InvalidCredentialsError
+
+        return user_exists

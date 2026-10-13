@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions.base import UnknownUserCreateError
 from app.features.users.models import User
 from app.features.users.repository import UserDatabase
-from app.features.users.schemas import UserCreate
+from app.features.users.schemas import TokenResponse, UserCreate, UserLogin
+from app.security.jwt import create_access_token
 from app.security.password import hash_password
 
 
@@ -26,3 +27,13 @@ class UserService:
             raise UnknownUserCreateError
 
         return created_user
+
+    async def login_user(self, user_data: UserLogin):
+        user = await UserDatabase.check_user_login(self.session, user_data)
+
+        token = await create_access_token(user.user_id)
+
+        return TokenResponse(
+            access_token=token,
+            token_type="bearer",
+        )

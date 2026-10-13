@@ -1,3 +1,7 @@
+class UnauthorizedError(Exception):
+    pass
+
+
 class EmailAlreadyExistsError(Exception):
     pass
 
@@ -15,4 +19,8 @@ class ProductAlreadyExistsError(Exception):
 
 
 class UnknownProductCreateError(Exception):
+    pass
+
+
+class InvalidCredentialsError(Exception):
     pass

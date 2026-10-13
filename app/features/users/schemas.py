@@ -17,3 +17,13 @@ class UserResponse(SchemaBase):
     username: str
     email: str
     created_at: datetime
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class TokenResponse(SchemaBase):
+    access_token: str
+    token_type: str
