@@ -27,3 +27,7 @@ class UserLogin(BaseModel):
 class TokenResponse(SchemaBase):
     access_token: str
     token_type: str
+
+
+class TempUserGet(BaseModel):
+    token: str

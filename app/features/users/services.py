@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions.base import UnknownUserCreateError
+from app.exceptions.base import UnauthorizedError, UnknownUserCreateError
 from app.features.users.models import User
 from app.features.users.repository import UserDatabase
 from app.features.users.schemas import TokenResponse, UserCreate, UserLogin
-from app.security.jwt import create_access_token
+from app.security.jwt import create_access_token, decode_access_token
 from app.security.password import hash_password
 
 
@@ -37,3 +37,16 @@ class UserService:
             access_token=token,
             token_type="bearer",
         )
+
+    async def get_user_by_token(self, token):
+        user_id = await decode_access_token(token)
+
+        if not isinstance(user_id, int):
+            raise UnauthorizedError
+
+        user = await UserDatabase.get_user_by_id(self.session, user_id)
+
+        if user is None:
+            raise UnauthorizedError
+
+        return user
