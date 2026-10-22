@@ -5,7 +5,7 @@ ROOT_PATH = Path(__file__).parent.resolve().parents[2]
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, func
+from sqlalchemy import CheckConstraint, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -20,7 +20,10 @@ class Product(Base):
 
     product_cost: Mapped[Decimal]
     
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
     __table_args__ = (
         CheckConstraint(
