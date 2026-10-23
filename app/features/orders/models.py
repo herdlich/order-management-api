@@ -25,7 +25,7 @@ class Order(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "order_cost > 0",
+            "total_amount > 0",
             name="ck_orders_total_amount",
         ),
     )
