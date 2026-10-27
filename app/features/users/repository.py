@@ -14,7 +14,7 @@ from app.security.password import verify_password
 
 class UserDatabase:
     @staticmethod
-    async def add_user_to_db(session: AsyncSession, user_model: UserCreate) -> user.User:
+    async def add_user_to_db(session: AsyncSession, user_model: UserCreate) -> UserCreate:
         try:
             statement_check_email = select(user.User).where(user.User.email == user_model.email)
             check_user_email_exists = await session.scalar(statement_check_email)
@@ -50,7 +50,7 @@ class UserDatabase:
         return user_exists
 
     @staticmethod
-    async def get_user_by_id(session: AsyncSession, user_id: int) -> user:
+    async def get_user_by_id(session: AsyncSession, user_id: int) -> user.User:
         statement_user = select(user.User).where(user.User.user_id == user_id)
         user_exists = await session.scalar(statement_user)
 
