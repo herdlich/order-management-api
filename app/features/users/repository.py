@@ -7,21 +7,21 @@ from app.exceptions.base import (
     UnauthorizedError,
     UsernameAlreadyExistsError,
 )
-from app.features.users import models as user
-from app.features.users.schemas import UserCreate, UserLogin
+from app.features.users.models import User
+from app.features.users.schemas import UserLogin
 from app.security.password import verify_password
 
 
 class UserDatabase:
     @staticmethod
-    async def add_user_to_db(session: AsyncSession, user_model: UserCreate) -> UserCreate:
+    async def add_user_to_db(session: AsyncSession, user_model: User) -> User:
         try:
-            statement_check_email = select(user.User).where(user.User.email == user_model.email)
+            statement_check_email = select(User).where(User.email == user_model.email)
             check_user_email_exists = await session.scalar(statement_check_email)
             if check_user_email_exists is not None:
                 raise EmailAlreadyExistsError
 
-            statement_check_username = select(user.User).where(user.User.username == user_model.username)
+            statement_check_username = select(User).where(User.username == user_model.username)
             check_user_username_exists = await session.scalar(statement_check_username)
             if check_user_username_exists is not None:
                 raise UsernameAlreadyExistsError
@@ -37,8 +37,8 @@ class UserDatabase:
             raise e
 
     @staticmethod
-    async def check_user_login(session: AsyncSession, user_model: UserLogin) -> user.User:
-        statement_check_username = select(user.User).where(user.User.username == user_model.username)
+    async def check_user_login(session: AsyncSession, user_model: UserLogin) -> User | None:
+        statement_check_username = select(User).where(User.username == user_model.username)
         user_exists = await session.scalar(statement_check_username)
 
         if user_exists is None or not verify_password(
@@ -50,11 +50,11 @@ class UserDatabase:
         return user_exists
 
     @staticmethod
-    async def get_user_by_id(session: AsyncSession, user_id: int) -> user.User:
-        statement_user = select(user.User).where(user.User.user_id == user_id)
+    async def get_user_by_id(session: AsyncSession, user_id: int) -> User | None:
+        statement_user = select(User).where(User.user_id == user_id)
         user_exists = await session.scalar(statement_user)
 
-        if user is None:
+        if user_exists is None:
             raise UnauthorizedError
 
         return user_exists
