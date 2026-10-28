@@ -4,13 +4,14 @@ from app.exceptions.base import UnauthorizedError, UnknownUserCreateError
 from app.features.users.models import User
 from app.features.users.repository import UserDatabase
 from app.features.users.schemas import TokenResponse, UserCreate, UserLogin
-from app.security.jwt import create_access_token, decode_access_token
+from app.security.jwt_tokens import create_access_token, decode_access_token
 from app.security.password import hash_password
 
 
 class UserService:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, user_repository: UserDatabase):
         self.session = session
+        self.user_repository = user_repository
 
     async def create_user(self, user_data: UserCreate):
         password_hash = hash_password(user_data.password)
@@ -21,7 +22,7 @@ class UserService:
             password_hash=password_hash,
         )
 
-        created_user = await UserDatabase.add_user_to_db(self.session, user_data_to_db)
+        created_user = await self.user_repository.add_user_to_db(self.session, user_data_to_db)
 
         if not created_user:
             raise UnknownUserCreateError
@@ -29,7 +30,7 @@ class UserService:
         return created_user
 
     async def login_user(self, user_data: UserLogin):
-        user = await UserDatabase.check_user_login(self.session, user_data)
+        user = await self.user_repository.check_user_login(self.session, user_data)
 
         token = await create_access_token(user.user_id)
 
@@ -44,7 +45,7 @@ class UserService:
         if not isinstance(user_id, int):
             raise UnauthorizedError
 
-        user = await UserDatabase.get_user_by_id(self.session, user_id)
+        user = await self.user_repository.get_user_by_id(self.session, user_id)
 
         if user is None:
             raise UnauthorizedError

@@ -7,8 +7,9 @@ from app.features.products.schemas import ProductCreate
 
 
 class ProductService:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, product_repository: ProductDatabase):
         self.session = session
+        self.product_repository = product_repository
 
     async def product_create(self, product_model: ProductCreate):
         product_model_to_db = Product(
@@ -17,7 +18,7 @@ class ProductService:
 
         )
 
-        created_product = await ProductDatabase.add_product_to_db(self.session, product_model_to_db)
+        created_product = await self.product_repository.add_product_to_db(self.session, product_model_to_db)
 
         if not created_product:
             raise UnknownProductCreateError
