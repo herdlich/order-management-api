@@ -4,6 +4,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_session
+from app.features.carts.services import CartService
 from app.features.products.services import ProductService
 from app.features.users.services import UserService
 from app.security.jwt import oauth2_scheme
@@ -27,3 +28,7 @@ async def get_user_service(session: Annotated[AsyncSession, Depends(get_session)
 
 async def get_product_service(session: Annotated[AsyncSession, Depends(get_session)]) -> ProductService:
     return ProductService(session)
+
+
+async def get_cart_service(session: Annotated[AsyncSession, Depends(get_session)]) -> CartService:
+    return CartService(session)
