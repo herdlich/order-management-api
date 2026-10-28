@@ -10,6 +10,7 @@ from alembic import context
 from app.db.base import Base
 from app.features.products import models
 from app.features.users import models
+from app.features.carts import models
 
 load_dotenv("app/.env")
 
