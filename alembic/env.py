@@ -11,6 +11,7 @@ from app.db.base import Base
 from app.features.products import models
 from app.features.users import models
 from app.features.carts import models
+from app.features.cart_items import models
 
 load_dotenv("app/.env")
 
