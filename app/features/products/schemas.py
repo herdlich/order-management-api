@@ -14,6 +14,7 @@ class ProductCreate(BaseModel):
 
 
 class ProductResponse(SchemaBase):
+    product_id: int
     product_name: str
     product_cost: Decimal
     created_at: datetime
