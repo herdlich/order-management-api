@@ -10,11 +10,9 @@ class CartService:
         self.session = session
         self.cart_repository = cart_repository
 
-    async def create_cart(self, cart_model: CartCreate):
+    async def create_cart_if_it_does_not_exist(self, user_id: int) -> None:
         cart_data_to_db = Cart(
-            user_id=cart_model.user_id,
+            user_id=user_id,
         )
 
-        created_cart = await self.cart_repository.add_cart_to_db(self.session, cart_data_to_db)
-
-        return created_cart
+        await self.cart_repository.add_cart_to_db_if_it_does_not_exist(self.session, cart_data_to_db, user_id)

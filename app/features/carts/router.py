@@ -3,11 +3,20 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.features.carts.services import CartService
-from app.features.carts.schemas import CartResponse, CartCreate
-from app.api.dependencies import get_cart_service
+from app.features.cart_items.services import CartItemService
+from app.features.cart_items.schemas import CartItemCreate, CartItemResponse
+from app.api.dependencies import get_current_user, get_cart_item_service, get_cart_service
 
 router = APIRouter(prefix="/carts", tags=["Carts"])
 
-@router.post("/", response_model=CartResponse)
-async def create_cart_endpoint(data: CartCreate, service: Annotated[CartService, Depends(get_cart_service)]):
-    return await service.create_cart(data)
+
+@router.post("/my/items", response_model=CartItemResponse)
+async def add_product_to_cart_endpoint(data: CartItemCreate,
+                                       cart_item_service: Annotated[CartItemService, Depends(get_cart_item_service)],
+                                       cart_service: Annotated[CartService, Depends(get_cart_service)],
+                                       current_user: Annotated[dict, Depends(get_current_user)]):
+    user_id = current_user.user_id
+
+    await cart_service.create_cart_if_it_does_not_exist(user_id)
+
+    return await cart_item_service.cart_item_create(data, user_id)

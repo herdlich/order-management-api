@@ -11,7 +11,7 @@ class CartItemService:
         self.cart_item_repository = cart_item_repository
         self.cart_repository = cart_repository
 
-    async def cart_item_create(self, cart_item_model: CartItemCreate, user_id):
+    async def cart_item_create(self, cart_item_model: CartItemCreate, user_id: int) -> CartItem:
         cart_from_repository = await self.cart_repository.get_cart_by_user_id(self.session, user_id)
 
         cart_item_model_to_db = CartItem(
