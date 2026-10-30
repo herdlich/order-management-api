@@ -21,6 +21,4 @@ async def add_product_to_cart_endpoint(data: CartItemCreate,
                                        current_user: Annotated[dict, Depends(get_current_user)]):
     user_id = current_user.user_id
 
-    await cart_service.create_cart_if_it_does_not_exist(user_id)
-
     return await cart_item_service.cart_item_create(data, user_id)
