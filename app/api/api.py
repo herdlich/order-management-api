@@ -7,6 +7,7 @@ from app.features.users import router as user
 app = FastAPI(
     title="Order Management API",
     version="beta",
+    swagger_ui_parameters={"persistAuthorization": True}
 )
 
 app.include_router(user.router)
