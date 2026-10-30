@@ -16,7 +16,6 @@ from app.features.users.schemas import (
     UserCreate,
     UserLogin,
     UserResponse,
-    TempUserGet
 )
 from app.features.users.services import UserService
 

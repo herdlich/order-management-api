@@ -1,6 +1,7 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.features.carts.models import Cart
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.features.carts.models import Cart
 
 
 class CartDatabase:

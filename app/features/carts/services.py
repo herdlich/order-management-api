@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.features.carts.schemas import CartCreate
 from app.features.carts.models import Cart
 from app.features.carts.repository import CartDatabase
 

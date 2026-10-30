@@ -1,8 +1,9 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.features.cart_items.models import CartItem
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.cart_items.schemas import CartItemCreate
-from app.features.cart_items.models import CartItem
 from app.features.carts.repository import CartDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class CartItemService:
