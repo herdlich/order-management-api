@@ -11,7 +11,7 @@ if not DATABASE_URL:
     raise RuntimeError('!!! No found "DATABASE_URL" in .env file !!!')
 
 engine = create_async_engine(DATABASE_URL)
-SessionFactory = async_sessionmaker(bind=engine)
+SessionFactory = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
