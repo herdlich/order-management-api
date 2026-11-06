@@ -11,8 +11,7 @@ from app.features.orders import models as ord_models
 from app.features.carts import models as cart_models
 from app.features.cart_items import models as cart_i_models
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-load_dotenv(ROOT_DIR / "app" / ".env")
+load_dotenv(".env")
 
 
 @pytest.fixture
