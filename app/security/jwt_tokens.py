@@ -9,7 +9,7 @@ from app.exceptions.base import UnauthorizedError
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/auth")
 
-load_dotenv("app/.env")
+load_dotenv()
 
 jwt_secret_key = os.getenv("JWT_SECRET_KEY")
 jwt_algorithm = os.getenv("JWT_ALGORITHM")
