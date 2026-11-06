@@ -1,6 +1,7 @@
 import asyncio
 import os
 from logging.config import fileConfig
+from alembic import context
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, pool
@@ -20,8 +21,17 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-environment_key = "DATABASE_URL"
+arguments = context.get_x_argument(as_dictionary=True)
+db_mode = "db"
+if arguments.get(db_mode) == "test":
+    environment_key = "DATABASE_TEST_URL"
+elif arguments.get(db_mode) == "migration":
+    environment_key = "DATABASE_MIGRATION_TEST_URL"
+else:
+    environment_key = "DATABASE_URL"
+
 database_url = os.getenv(environment_key)
+
 if not database_url:
     raise RuntimeError(f"{environment_key} not found in .env")
 
@@ -43,11 +53,11 @@ def run_migrations_offline() -> None:
 
 def do_run_migrations(connection):
     context.configure(
-                connection=connection,
-                target_metadata=target_metadata,
-                compare_type=True,
-            )
-    
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_type=True,
+    )
+
     with context.begin_transaction():
         context.run_migrations()
 
@@ -55,9 +65,9 @@ def do_run_migrations(connection):
 def run_migrations_online() -> None:
     async def run_async():
         engine = create_async_engine(
-                database_url,
-                poolclass=pool.NullPool,
-            )
+            database_url,
+            poolclass=pool.NullPool,
+        )
 
         try:
             async with engine.connect() as connection:
