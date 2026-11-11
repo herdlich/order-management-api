@@ -12,6 +12,8 @@ from app.features.products.repository import ProductDatabase
 from app.features.products.services import ProductService
 from app.features.users.repository import UserDatabase
 from app.features.users.services import UserService
+from app.features.orders.repository import OrderDatabase
+from app.features.orders.services import OrderService
 from app.security.jwt_tokens import oauth2_scheme
 
 
@@ -48,3 +50,11 @@ async def get_cart_item_service(session: Annotated[AsyncSession, Depends(get_ses
                                     CartItemDatabase, Depends(CartItemDatabase)],
                                 cart_repository: Annotated[CartDatabase, Depends(CartDatabase)]) -> CartItemService:
     return CartItemService(session, cart_item_repository, cart_repository)
+
+
+async def get_order_service(session: Annotated[AsyncSession, Depends(get_session)],
+                            order_repository: Annotated[OrderDatabase, Depends(OrderDatabase)],
+                            cart_repository: Annotated[CartDatabase, Depends(CartDatabase)],
+                            cart_item_repository: Annotated[CartItemDatabase, Depends(CartItemDatabase)],
+                            product_repository: Annotated[ProductDatabase, Depends(ProductDatabase)]) -> OrderService:
+    return OrderService(session, order_repository, cart_repository, cart_item_repository, product_repository)

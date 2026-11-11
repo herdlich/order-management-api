@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select, delete
+from typing import Sequence
 
 from app.features.cart_items.models import CartItem
 
@@ -28,3 +30,17 @@ class CartItemDatabase:
             raise RuntimeError("Cart item was not returned")
 
         return result
+
+
+
+    @staticmethod
+    async def get_all_cart_items_by_cart_id(session: AsyncSession, cart_id: int) -> Sequence[CartItem] | None:
+        stmt = select(CartItem).where(CartItem.cart_id == cart_id)
+        result = await session.scalars(stmt)
+
+        return result.all()
+
+    @staticmethod
+    async def clear_cart_items_by_cart_id(session: AsyncSession, cart_id: int) -> None:
+        stmt = delete(CartItem).where(CartItem.cart_id == cart_id)
+        await session.execute(stmt)

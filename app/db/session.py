@@ -10,7 +10,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError('!!! No found "DATABASE_URL" in .env file !!!')
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, echo=True)
 SessionFactory = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 

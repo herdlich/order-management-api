@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions.base import ProductAlreadyExistsError
 from app.features.products.models import Product
+from app.features.cart_items.models import CartItem
 
 
 class ProductDatabase:
@@ -24,3 +25,15 @@ class ProductDatabase:
         except Exception as e:
             await session.rollback()
             raise e
+
+    @staticmethod
+    async def get_products_by_cart_id(session: AsyncSession, cart_id: int):
+        stmt = (
+            select(CartItem, Product.product_cost)
+            .join(Product, CartItem.product_id == Product.product_id)
+            .where(CartItem.cart_id == cart_id)
+        )
+
+        products = await session.execute(stmt)
+
+        return products.all()
