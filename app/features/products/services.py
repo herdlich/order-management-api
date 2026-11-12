@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions.base import UnknownProductCreateError, NoPermissionError
+from app.exceptions.base import NoPermissionError, UnknownProductCreateError
 from app.features.products.models import Product
 from app.features.products.repository import ProductDatabase
 from app.features.products.schemas import ProductCreate

@@ -8,12 +8,12 @@ from app.features.cart_items.repository import CartItemDatabase
 from app.features.cart_items.services import CartItemService
 from app.features.carts.repository import CartDatabase
 from app.features.carts.services import CartService
+from app.features.orders.repository import OrderDatabase
+from app.features.orders.services import OrderService
 from app.features.products.repository import ProductDatabase
 from app.features.products.services import ProductService
 from app.features.users.repository import UserDatabase
 from app.features.users.services import UserService
-from app.features.orders.repository import OrderDatabase
-from app.features.orders.services import OrderService
 from app.security.jwt_tokens import oauth2_scheme
 
 

@@ -1,6 +1,8 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Depends
-from app.api.dependencies import get_order_service, get_current_user
+
+from app.api.dependencies import get_current_user, get_order_service
 from app.features.orders.schemas import OrderResponse
 from app.features.orders.services import OrderService
 

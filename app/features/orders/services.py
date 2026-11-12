@@ -1,8 +1,8 @@
+from app.features.cart_items.repository import CartItemDatabase
+from app.features.carts.repository import CartDatabase
 from app.features.orders.models import Order, OrderItem
 from app.features.orders.repository import OrderDatabase
 from app.features.products.repository import ProductDatabase
-from app.features.carts.repository import CartDatabase
-from app.features.cart_items.repository import CartItemDatabase
 
 
 class OrderService:

@@ -1,6 +1,6 @@
+from app.features.users.repository import UserDatabase
 from app.features.users.schemas import UserCreate
 from app.features.users.services import UserService
-from app.features.users.repository import UserDatabase
 
 
 async def test_happy_user_create_service(db_session):

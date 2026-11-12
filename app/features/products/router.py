@@ -2,8 +2,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.dependencies import get_product_service, get_current_user
-from app.exceptions.base import ProductAlreadyExistsError, UnknownProductCreateError, NoPermissionError
+from app.api.dependencies import get_current_user, get_product_service
+from app.exceptions.base import (
+    NoPermissionError,
+    ProductAlreadyExistsError,
+    UnknownProductCreateError,
+)
 from app.features.products.schemas import ProductCreate, ProductResponse
 from app.features.products.services import ProductService
 

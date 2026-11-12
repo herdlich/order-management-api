@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions.base import ProductAlreadyExistsError
-from app.features.products.models import Product
 from app.features.cart_items.models import CartItem
+from app.features.products.models import Product
 
 
 class ProductDatabase:
