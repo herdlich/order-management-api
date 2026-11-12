@@ -36,8 +36,9 @@ async def get_user_service(session: Annotated[AsyncSession, Depends(get_session)
 
 async def get_product_service(session: Annotated[AsyncSession, Depends(get_session)],
                               product_repository: Annotated[
-                                  ProductDatabase, Depends(ProductDatabase)]) -> ProductService:
-    return ProductService(session, product_repository)
+                                  ProductDatabase, Depends(ProductDatabase)],
+                              user_repository: Annotated[UserDatabase, Depends(UserDatabase)]) -> ProductService:
+    return ProductService(session, product_repository, user_repository)
 
 
 async def get_cart_service(session: Annotated[AsyncSession, Depends(get_session)],

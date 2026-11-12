@@ -10,6 +10,10 @@ class UsernameAlreadyExistsError(Exception):
     pass
 
 
+class NoPermissionError(Exception):
+    pass
+
+
 class UnknownUserCreateError(Exception):
     pass
 

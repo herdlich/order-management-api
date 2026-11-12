@@ -42,8 +42,8 @@ class UserDatabase:
         user_exists = await session.scalar(statement_check_username)
 
         if user_exists is None or not verify_password(
-            user_model.password, 
-            user_exists.password_hash
+                user_model.password,
+                user_exists.password_hash
         ):
             raise InvalidCredentialsError
 
@@ -58,3 +58,13 @@ class UserDatabase:
             raise UnauthorizedError
 
         return user_exists
+
+    @staticmethod
+    async def check_is_admin(session, user_id: int) -> bool:
+        stmt = select(User).where(User.user_id == user_id)
+        user = await session.scalar(stmt)
+
+        if user.role != "admin":
+            return False
+
+        return True
