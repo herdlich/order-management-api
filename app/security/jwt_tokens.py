@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import jwt
 from dotenv import load_dotenv
@@ -16,7 +16,7 @@ jwt_algorithm = os.getenv("JWT_ALGORITHM")
 
 
 async def create_access_token(user_id: int) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(hours=2)
+    expire = datetime.now(UTC) + timedelta(hours=2)
 
     payload = {
         "sub": str(user_id),

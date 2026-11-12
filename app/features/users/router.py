@@ -10,7 +10,6 @@ from app.exceptions.base import (
     UnknownUserCreateError,
     UsernameAlreadyExistsError,
 )
-from app.features.users.models import User
 from app.features.users.schemas import (
     TokenResponse,
     UserCreate,

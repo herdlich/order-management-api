@@ -1,16 +1,10 @@
 import os
-from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.db.base import Base
-from app.features.cart_items import models as cart_i_models
-from app.features.carts import models as cart_models
-from app.features.orders import models as ord_models
-from app.features.products import models as prod_models
-from app.features.users import models as us_models
 
 load_dotenv(".env")
 
