@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
+from app.exceptions.base import UnauthorizedError
 from app.features.carts import router as cart
 from app.features.orders import router as order
 from app.features.products import router as product
@@ -10,6 +12,18 @@ app = FastAPI(
     version="beta",
     swagger_ui_parameters={"persistAuthorization": True}
 )
+
+
+@app.exception_handler(UnauthorizedError)
+def unauthorized_handler(
+    _request: Request,
+    _exc: UnauthorizedError,
+):
+    return JSONResponse(
+        status_code=401,
+        content={"detail": "Unauthorized"},
+        detail={"WWW-Authenticate": "Bearer"},
+    )
 
 app.include_router(user.router)
 app.include_router(product.router)
