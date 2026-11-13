@@ -64,7 +64,4 @@ class UserDatabase:
         stmt = select(User).where(User.user_id == user_id)
         user = await session.scalar(stmt)
 
-        if user.role != "admin":
-            return False
-
-        return True
+        return user.role == "admin"
