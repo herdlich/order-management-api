@@ -6,6 +6,8 @@ from app.features.products.repository import ProductDatabase
 from app.features.products.schemas import ProductCreate
 from app.features.users.repository import UserDatabase
 
+PAGE_SIZE = 10
+
 
 class ProductService:
     def __init__(self, session: AsyncSession, product_repository: ProductDatabase, user_repository: UserDatabase):
@@ -29,3 +31,17 @@ class ProductService:
             raise UnknownProductCreateError
 
         return created_product
+
+    async def get_all_products_on_the_page(self, page_number: int) -> list[Product]:
+        products = await self.product_repository.get_all_products_on_the_page_database(
+            self.session,
+            page_size=PAGE_SIZE,
+            page_number=page_number,
+        )
+
+        return products
+
+    async def get_product_by_id(self, product_id: int) -> Product:
+        product = await self.product_repository.get_product_by_id(self.session, product_id)
+
+        return product

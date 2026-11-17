@@ -1,9 +1,11 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+import math
 
 from app.exceptions.base import ProductAlreadyExistsError
 from app.features.cart_items.models import CartItem
 from app.features.products.models import Product
+from app.exceptions.base import NonExistentPageError, ProductNotFoundError
 
 
 class ProductDatabase:
@@ -37,3 +39,44 @@ class ProductDatabase:
         products = await session.execute(stmt)
 
         return products.all()
+
+    @staticmethod
+    async def get_all_products_on_the_page_database(session: AsyncSession, *, page_size: int, page_number: int) -> list:
+        if page_number < 1:
+            raise NonExistentPageError
+
+        if page_size < 1:
+            print("page_size must be greater than 0")  # temporary replacement for logs
+            raise
+
+        count_stmt = select(func.count(Product.product_id))
+        total_count = await session.scalar(count_stmt) or 0
+
+        if total_count == 0 and page_number > 1:
+            raise NonExistentPageError
+
+        total_pages = math.ceil(total_count / page_size)
+
+        if total_count > 0 and page_number > total_pages:
+            raise NonExistentPageError
+
+        offset = (page_number - 1) * page_size
+        stmt = (
+            select(*Product.__table__.c)
+            .order_by(Product.product_id.asc())
+            .offset(offset)
+            .limit(page_size)
+        )
+        result = (await session.execute(stmt)).mappings().all()
+
+        return list(result)
+
+    @staticmethod
+    async def get_product_by_id(session: AsyncSession, product_id: int) -> Product:
+        result = await session.get(Product, product_id)
+
+        if result is None:
+            raise ProductNotFoundError
+
+        # noinspection PyTypeChecker
+        return result

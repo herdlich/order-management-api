@@ -28,3 +28,11 @@ class UnknownProductCreateError(Exception):
 
 class InvalidCredentialsError(Exception):
     pass
+
+
+class NonExistentPageError(Exception):
+    pass
+
+
+class ProductNotFoundError(Exception):
+    pass

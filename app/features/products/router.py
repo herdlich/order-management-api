@@ -7,6 +7,8 @@ from app.exceptions.base import (
     NoPermissionError,
     ProductAlreadyExistsError,
     UnknownProductCreateError,
+    NonExistentPageError,
+    ProductNotFoundError,
 )
 from app.features.products.schemas import ProductCreate, ProductResponse
 from app.features.products.services import ProductService
@@ -36,4 +38,34 @@ async def create_product_endpoint(data: ProductCreate, service: Annotated[Produc
         raise HTTPException(
             status_code=403,
             detail="You don't have permission to perform this action"
+        )
+
+
+@router.get("/{page_number}", response_model=list[ProductResponse], summary="Get All Products")
+async def get_all_products_on_the_page_endpoint(
+        page_number: int,
+        service: Annotated[ProductService, Depends(get_product_service)],
+):
+    try:
+        return await service.get_all_products_on_the_page(page_number)
+
+    except NonExistentPageError:
+        raise HTTPException(
+            status_code=404,
+            detail="Page with this number does not exist"
+        )
+
+
+@router.get("/{product_id}", response_model=ProductResponse, summary="Get Product")
+async def get_product_by_id_endpoint(
+        product_id: int,
+        service: Annotated[ProductService, Depends(get_product_service)],
+):
+    try:
+        return await service.get_product_by_id(product_id)
+
+    except ProductNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Product with this id does not exist"
         )
