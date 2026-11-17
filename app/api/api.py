@@ -22,7 +22,7 @@ def unauthorized_handler(
     return JSONResponse(
         status_code=401,
         content={"detail": "Unauthorized"},
-        detail={"WWW-Authenticate": "Bearer"},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
 app.include_router(user.router)
