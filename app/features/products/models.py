@@ -30,4 +30,8 @@ class Product(Base):
             "product_cost > 0",
             name="check_cost_positive",
         ),
+        CheckConstraint(
+            "length(trim(product_name)) >= 3",
+            name="check_product_name_min_length",
+        ),
     )

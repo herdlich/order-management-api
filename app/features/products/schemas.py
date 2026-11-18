@@ -14,7 +14,7 @@ class ProductCreate(BaseModel):
 
 
 class ProductUpdate(BaseModel):
-    product_name: str | None = None
+    product_name: str | None = Field(default=None, min_length=3)
     product_cost: Decimal | None = None
 
 
