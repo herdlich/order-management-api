@@ -46,7 +46,10 @@ class ProductService:
 
         return product
 
-    async def update_product(self, product_id: int, data: ProductUpdate):
+    async def update_product(self, product_id: int, data: ProductUpdate, user_id: int):
+        if not await self.user_repository.check_is_admin(self.session, user_id):
+            raise NoPermissionError
+
         product = await self.product_repository.get_product_by_id(self.session, product_id)
 
         update_data = data.model_dump(exclude_unset=True)

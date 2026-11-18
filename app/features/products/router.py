@@ -76,5 +76,6 @@ async def update_product_endpoint(
         product_id: int,
         data: ProductUpdate,
         service: Annotated[ProductService, Depends(get_product_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
 ):
-    return await service.update_product(product_id, data)
+    return await service.update_product(product_id, data, current_user.user_id)
