@@ -41,7 +41,7 @@ async def create_product_endpoint(data: ProductCreate, service: Annotated[Produc
         )
 
 
-@router.get("/{page_number}", response_model=list[ProductResponse], summary="Get All Products")
+@router.get("/page/{page_number}", response_model=list[ProductResponse], summary="Get All Products")
 async def get_all_products_on_the_page_endpoint(
         page_number: int,
         service: Annotated[ProductService, Depends(get_product_service)],
