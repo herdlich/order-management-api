@@ -13,6 +13,11 @@ class ProductCreate(BaseModel):
     product_cost: Decimal = Field(gt=0, description="The cost must be greater than zero")
 
 
+class ProductUpdate(BaseModel):
+    product_name: str | None = None
+    product_cost: Decimal | None = None
+
+
 class ProductResponse(SchemaBase):
     product_id: int
     product_name: str

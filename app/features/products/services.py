@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions.base import NoPermissionError, UnknownProductCreateError
 from app.features.products.models import Product
 from app.features.products.repository import ProductDatabase
-from app.features.products.schemas import ProductCreate
+from app.features.products.schemas import ProductCreate, ProductUpdate
 from app.features.users.repository import UserDatabase
 
 PAGE_SIZE = 10
@@ -45,3 +45,13 @@ class ProductService:
         product = await self.product_repository.get_product_by_id(self.session, product_id)
 
         return product
+
+    async def update_product(self, product_id: int, data: ProductUpdate):
+        product = await self.product_repository.get_product_by_id(self.session, product_id)
+
+        update_data = data.model_dump(exclude_unset=True)
+
+        for field, value in update_data.items():
+            setattr(product, field, value)
+
+        return await self.product_repository.update_product_in_database(self.session, product)

@@ -80,3 +80,10 @@ class ProductDatabase:
 
         # noinspection PyTypeChecker
         return result
+
+    @staticmethod
+    async def update_product_in_database(session: AsyncSession, product: Product) -> Product:
+        await session.commit()
+        await session.refresh(product)
+
+        return product

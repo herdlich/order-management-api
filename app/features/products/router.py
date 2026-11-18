@@ -10,7 +10,7 @@ from app.exceptions.base import (
     NonExistentPageError,
     ProductNotFoundError,
 )
-from app.features.products.schemas import ProductCreate, ProductResponse
+from app.features.products.schemas import ProductCreate, ProductResponse, ProductUpdate
 from app.features.products.services import ProductService
 
 router = APIRouter(prefix="/products", tags=["Products"])
@@ -69,3 +69,12 @@ async def get_product_by_id_endpoint(
             status_code=404,
             detail="Product with this id does not exist"
         )
+
+
+@router.patch("/{product_id}", response_model=ProductResponse, summary="Update Product")
+async def update_product_endpoint(
+        product_id: int,
+        data: ProductUpdate,
+        service: Annotated[ProductService, Depends(get_product_service)],
+):
+    return await service.update_product(product_id, data)
