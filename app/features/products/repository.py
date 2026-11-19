@@ -87,3 +87,13 @@ class ProductDatabase:
         await session.refresh(product)
 
         return product
+
+
+    @staticmethod
+    async def delete_product_from_database(session: AsyncSession, product_id: int) -> None:
+        product = await session.get(Product, product_id)
+
+        if product is None:
+            raise ProductNotFoundError
+
+        await session.delete(product)

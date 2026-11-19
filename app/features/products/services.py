@@ -58,3 +58,11 @@ class ProductService:
             setattr(product, field, value)
 
         return await self.product_repository.update_product_in_database(self.session, product)
+
+    async def delete_product(self, user_id: int, product_id: int):
+        if not await self.user_repository.check_is_admin(self.session, user_id):
+            raise NoPermissionError
+
+        await self.product_repository.delete_product_from_database(self.session, product_id)
+
+        await self.session.commit()

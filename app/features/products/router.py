@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import get_current_user, get_product_service
 from app.exceptions.base import (
@@ -79,3 +79,21 @@ async def update_product_endpoint(
         current_user: Annotated[dict, Depends(get_current_user)],
 ):
     return await service.update_product(product_id, data, current_user.user_id)
+
+
+@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete Product")
+async def delete_product_endpoint(
+        product_id: int,
+        service: Annotated[ProductService, Depends(get_product_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    try:
+        await service.delete_product(current_user.user_id, product_id)
+
+        return None
+
+    except ProductNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Product with this id does not exist"
+        )
