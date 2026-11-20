@@ -5,6 +5,8 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.features.cart_items.models import CartItem
+from app.features.carts.models import Cart
+from app.exceptions.base import CartItemNotFoundError
 
 
 class CartItemDatabase:
@@ -20,7 +22,7 @@ class CartItemDatabase:
             constraint="uq_cart_product",
             set_={
                 "quantity": (
-                    CartItem.quantity + stmt.excluded.quantity
+                        CartItem.quantity + stmt.excluded.quantity
                 ),
             },
         ).returning(CartItem)
@@ -31,8 +33,6 @@ class CartItemDatabase:
             raise RuntimeError("Cart item was not returned")
 
         return result
-
-
 
     @staticmethod
     async def get_all_cart_items_by_cart_id(session: AsyncSession, cart_id: int) -> Sequence[CartItem] | None:
@@ -45,3 +45,21 @@ class CartItemDatabase:
     async def clear_cart_items_by_cart_id(session: AsyncSession, cart_id: int) -> None:
         stmt = delete(CartItem).where(CartItem.cart_id == cart_id)
         await session.execute(stmt)
+
+    @staticmethod
+    async def delete_cart_item_by_its_id(session: AsyncSession, user_id: int, cart_item_id: int) -> None:
+        stmt = (
+            select(CartItem)
+            .join(Cart)
+            .where(
+                CartItem.cart_item_id == cart_item_id,
+                Cart.user_id == user_id,
+            )
+        )
+
+        cart_item = await session.scalar(stmt)
+
+        if not cart_item:
+            raise CartItemNotFoundError
+
+        await session.delete(cart_item)

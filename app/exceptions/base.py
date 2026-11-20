@@ -36,3 +36,7 @@ class NonExistentPageError(Exception):
 
 class ProductNotFoundError(Exception):
     pass
+
+
+class CartItemNotFoundError(Exception):
+    pass

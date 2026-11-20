@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import (
     get_cart_item_service,
@@ -10,6 +10,7 @@ from app.api.dependencies import (
 from app.features.cart_items.schemas import CartItemCreate, CartItemResponse
 from app.features.cart_items.services import CartItemService
 from app.features.carts.services import CartService
+from app.exceptions.base import CartItemNotFoundError
 
 router = APIRouter(prefix="/carts", tags=["Carts"])
 
@@ -29,3 +30,19 @@ async def get_all_cart_items_endpoint(
         current_user: Annotated[dict, Depends(get_current_user)],
 ):
     return await cart_service.get_all_cart_items(current_user.user_id)
+
+
+@router.delete("{cart_item_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete My Cart Item")
+async def delete_cart_item_endpoint(
+        cart_item_id: int,
+        cart_item_service: Annotated[CartItemService, Depends(get_cart_item_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    try:
+        await cart_item_service.delete_cart_item(current_user.user_id, cart_item_id)
+
+    except CartItemNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Item with id {cart_item_id} was not found in your cart",
+        )

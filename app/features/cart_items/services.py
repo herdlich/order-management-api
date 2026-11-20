@@ -34,6 +34,13 @@ class CartItemService:
 
             return created_cart_item
 
+
+
         except Exception:
             await self.session.rollback()
             raise
+
+    async def delete_cart_item(self, user_id, cart_item_id):
+        await self.cart_item_repository.delete_cart_item_by_its_id(self.session, user_id, cart_item_id)
+        
+        await self.session.commit()
