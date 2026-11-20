@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SchemaBase(BaseModel):
@@ -9,7 +9,7 @@ class SchemaBase(BaseModel):
 
 class CartItemCreate(BaseModel):
     product_id: int
-    quantity: int
+    quantity: int = Field(gt=0, description="The quantity must be greater than 0")
 
 
 class CartItemDelete(BaseModel):
