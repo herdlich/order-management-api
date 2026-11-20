@@ -4,14 +4,16 @@ from app.exceptions.base import UnauthorizedError, UnknownUserCreateError
 from app.features.users.models import User
 from app.features.users.repository import UserDatabase
 from app.features.users.schemas import TokenResponse, UserCreate, UserLogin
+from app.features.carts.repository import CartDatabase
 from app.security.jwt_tokens import create_access_token, decode_access_token
 from app.security.password import hash_password
 
 
 class UserService:
-    def __init__(self, session: AsyncSession, user_repository: UserDatabase):
+    def __init__(self, session: AsyncSession, user_repository: UserDatabase, cart_repository: CartDatabase):
         self.session = session
         self.user_repository = user_repository
+        self.cart_repository = cart_repository
 
     async def create_user(self, user_data: UserCreate):
         password_hash = hash_password(user_data.password)
@@ -26,6 +28,10 @@ class UserService:
 
         if not created_user:
             raise UnknownUserCreateError
+
+        await self.cart_repository.create_cart(self.session, created_user.user_id)
+
+        await self.session.commit()
 
         return created_user
 

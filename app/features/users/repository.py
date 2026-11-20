@@ -27,7 +27,7 @@ class UserDatabase:
                 raise UsernameAlreadyExistsError
 
             session.add(user_model)
-            await session.commit()
+            await session.flush()
             await session.refresh(user_model)
 
             return user_model

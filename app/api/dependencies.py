@@ -21,8 +21,9 @@ async def get_current_user(
         token: Annotated[str, Depends(oauth2_scheme)],
         session: Annotated[AsyncSession, Depends(get_session)],
         user_repository: Annotated[UserDatabase, Depends(UserDatabase)],
+        cart_repository: Annotated[CartDatabase, Depends(CartDatabase)],
 ):
-    service = UserService(session, user_repository)
+    service = UserService(session, user_repository, cart_repository)
 
     user = await service.get_user_by_token(token)
 
@@ -30,8 +31,9 @@ async def get_current_user(
 
 
 async def get_user_service(session: Annotated[AsyncSession, Depends(get_session)],
-                           user_repository: Annotated[UserDatabase, Depends(UserDatabase)]) -> UserService:
-    return UserService(session, user_repository)
+                           user_repository: Annotated[UserDatabase, Depends(UserDatabase)],
+                           cart_repository: Annotated[CartDatabase, Depends(CartDatabase)], ) -> UserService:
+    return UserService(session, user_repository, cart_repository)
 
 
 async def get_product_service(session: Annotated[AsyncSession, Depends(get_session)],
