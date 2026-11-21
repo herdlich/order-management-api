@@ -39,7 +39,7 @@ class CartItemDatabase:
         stmt = select(CartItem).where(CartItem.cart_id == cart_id)
         result = await session.scalars(stmt)
 
-        return result.all()
+        return result
 
     @staticmethod
     async def clear_cart_items_by_cart_id(session: AsyncSession, cart_id: int) -> None:
