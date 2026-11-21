@@ -63,3 +63,26 @@ class CartItemDatabase:
             raise CartItemNotFoundError
 
         await session.delete(cart_item)
+
+    @staticmethod
+    async def change_cart_item_quantity_by_its_id(
+            session: AsyncSession,
+            user_id: int,
+            cart_item_id: int,
+            quantity: int,
+    ) -> None:
+        stmt = (
+            select(CartItem)
+            .join(Cart)
+            .where(
+                CartItem.cart_item_id == cart_item_id,
+                Cart.user_id == user_id,
+            )
+        )
+
+        cart_item = await session.scalar(stmt)
+
+        if not cart_item:
+            raise CartItemNotFoundError
+
+        cart_item.quantity = quantity

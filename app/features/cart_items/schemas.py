@@ -17,6 +17,10 @@ class CartItemDelete(BaseModel):
     quantity: int
 
 
+class CartItemUpdate(BaseModel):
+    quantity: int
+
+
 class CartItemResponse(SchemaBase):
     cart_item_id: int
     product_id: int

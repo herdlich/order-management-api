@@ -7,7 +7,7 @@ from app.api.dependencies import (
     get_cart_service,
     get_current_user,
 )
-from app.features.cart_items.schemas import CartItemCreate, CartItemResponse
+from app.features.cart_items.schemas import CartItemCreate, CartItemResponse, CartItemUpdate
 from app.features.cart_items.services import CartItemService
 from app.features.carts.services import CartService
 from app.exceptions.base import CartItemNotFoundError
@@ -40,6 +40,23 @@ async def delete_cart_item_endpoint(
 ):
     try:
         await cart_item_service.delete_cart_item(current_user.user_id, cart_item_id)
+
+    except CartItemNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Item with id {cart_item_id} was not found in your cart",
+        )
+
+
+@router.patch("/{cart_item_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def change_cart_item_quantity_endpoint(
+        cart_item_id: int,
+        data: CartItemUpdate,
+        service: Annotated[CartItemService, Depends(get_cart_item_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    try:
+        await service.change_cart_item_quantity(current_user.user_id, cart_item_id, data.quantity)
 
     except CartItemNotFoundError:
         raise HTTPException(

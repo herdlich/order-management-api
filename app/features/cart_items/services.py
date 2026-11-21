@@ -42,5 +42,15 @@ class CartItemService:
 
     async def delete_cart_item(self, user_id, cart_item_id):
         await self.cart_item_repository.delete_cart_item_by_its_id(self.session, user_id, cart_item_id)
-        
+
+        await self.session.commit()
+
+    async def change_cart_item_quantity(self, user_id: int, cart_item_id: int, quantity: int) -> None:
+        await self.cart_item_repository.change_cart_item_quantity_by_its_id(
+            self.session,
+            user_id,
+            cart_item_id,
+            quantity,
+        )
+
         await self.session.commit()
