@@ -20,7 +20,8 @@ class OrderService:
             # order create
             user_cart = await self.cart_repository.get_cart_by_user_id(self.session, user_id)
 
-            cart_items_with_cost = await self.product_repository.get_products_by_cart_id(self.session, user_cart.cart_id)
+            cart_items_with_cost = await self.product_repository.get_products_by_cart_id(self.session,
+                                                                                         user_cart.cart_id)
 
             total_amount = sum(
                 cost * item.quantity
@@ -60,4 +61,7 @@ class OrderService:
         except Exception:
             await self.session.rollback()
 
+    async def get_order(self, user_id: int, order_id: int):
+        order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
 
+        return order

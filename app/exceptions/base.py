@@ -40,3 +40,7 @@ class ProductNotFoundError(Exception):
 
 class CartItemNotFoundError(Exception):
     pass
+
+
+class OrderNotFoundError(Exception):
+    pass
