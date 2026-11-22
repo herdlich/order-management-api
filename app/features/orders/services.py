@@ -1,3 +1,4 @@
+from app.exceptions.base import CartIsEmptyError
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.carts.repository import CartDatabase
 from app.features.orders.models import Order, OrderItem
@@ -27,6 +28,9 @@ class OrderService:
                 cost * item.quantity
                 for item, cost in cart_items_with_cost
             )
+
+            if total_amount <= 0:
+                raise CartIsEmptyError
 
             order_data_to_db = Order(
                 user_id=user_id,
@@ -58,8 +62,14 @@ class OrderService:
 
             return order
 
-        except Exception:
+        except CartIsEmptyError:
             await self.session.rollback()
+
+            raise CartIsEmptyError
+
+        except Exception as e:
+            await self.session.rollback()
+            raise e
 
     async def get_order(self, user_id: int, order_id: int):
         order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)

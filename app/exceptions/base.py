@@ -44,3 +44,7 @@ class CartItemNotFoundError(Exception):
 
 class OrderNotFoundError(Exception):
     pass
+
+
+class CartIsEmptyError(Exception):
+    pass
