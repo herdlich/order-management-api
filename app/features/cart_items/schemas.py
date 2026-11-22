@@ -18,7 +18,7 @@ class CartItemDelete(BaseModel):
 
 
 class CartItemUpdate(BaseModel):
-    quantity: int
+    quantity: int = Field(gt=0, description="The quantity must be greater than 0")
 
 
 class CartItemResponse(SchemaBase):
