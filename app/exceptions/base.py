@@ -48,3 +48,7 @@ class OrderNotFoundError(Exception):
 
 class CartIsEmptyError(Exception):
     pass
+
+
+class PermissibleQuantityExceededError(Exception):
+    pass

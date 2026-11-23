@@ -97,3 +97,16 @@ class ProductDatabase:
             raise ProductNotFoundError
 
         await session.delete(product)
+
+    @staticmethod
+    async def change_product_quantity(session: AsyncSession, product_id: int, quantity: int):
+        if quantity < 0:
+            raise ValueError("Quantity must be greater than 0")
+
+        stmt = select(Product).where(Product.product_id == product_id)
+        product = await session.scalar(stmt)
+
+        if product is None:
+            raise ProductNotFoundError
+
+        product.quantity = quantity

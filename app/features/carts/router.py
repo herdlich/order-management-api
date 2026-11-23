@@ -10,7 +10,7 @@ from app.api.dependencies import (
 from app.features.cart_items.schemas import CartItemCreate, CartItemResponse, CartItemUpdate
 from app.features.cart_items.services import CartItemService
 from app.features.carts.services import CartService
-from app.exceptions.base import CartItemNotFoundError
+from app.exceptions.base import CartItemNotFoundError, PermissibleQuantityExceededError
 
 router = APIRouter(prefix="/carts", tags=["Carts"])
 
@@ -19,9 +19,16 @@ router = APIRouter(prefix="/carts", tags=["Carts"])
 async def add_product_to_cart_endpoint(data: CartItemCreate,
                                        cart_item_service: Annotated[CartItemService, Depends(get_cart_item_service)],
                                        current_user: Annotated[dict, Depends(get_current_user)]):
-    user_id = current_user.user_id
+    try:
+        user_id = current_user.user_id
 
-    return await cart_item_service.cart_item_create(data, user_id)
+        return await cart_item_service.cart_item_create(data, user_id)
+
+    except PermissibleQuantityExceededError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Quantity exceeded",
+        )
 
 
 @router.get("/my/items", response_model=list[CartItemResponse], summary="Get My Cart Items")

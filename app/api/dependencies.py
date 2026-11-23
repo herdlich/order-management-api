@@ -53,8 +53,10 @@ async def get_cart_service(session: Annotated[AsyncSession, Depends(get_session)
 async def get_cart_item_service(session: Annotated[AsyncSession, Depends(get_session)],
                                 cart_item_repository: Annotated[
                                     CartItemDatabase, Depends(CartItemDatabase)],
-                                cart_repository: Annotated[CartDatabase, Depends(CartDatabase)]) -> CartItemService:
-    return CartItemService(session, cart_item_repository, cart_repository)
+                                cart_repository: Annotated[CartDatabase, Depends(CartDatabase)],
+                                product_repository: Annotated[
+                                    ProductDatabase, Depends(ProductDatabase)], ) -> CartItemService:
+    return CartItemService(session, cart_item_repository, cart_repository, product_repository)
 
 
 async def get_order_service(session: Annotated[AsyncSession, Depends(get_session)],

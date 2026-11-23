@@ -4,13 +4,17 @@ from app.features.cart_items.models import CartItem
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.cart_items.schemas import CartItemCreate
 from app.features.carts.repository import CartDatabase
+from app.features.products.repository import ProductDatabase
+from app.exceptions.base import PermissibleQuantityExceededError
 
 
 class CartItemService:
-    def __init__(self, session: AsyncSession, cart_item_repository: CartItemDatabase, cart_repository: CartDatabase):
+    def __init__(self, session: AsyncSession, cart_item_repository: CartItemDatabase, cart_repository: CartDatabase,
+                 product_repository: ProductDatabase):
         self.session = session
         self.cart_item_repository = cart_item_repository
         self.cart_repository = cart_repository
+        self.product_repository = product_repository
 
     async def cart_item_create(self, cart_item_model: CartItemCreate, user_id: int) -> CartItem | None:
         try:
@@ -19,10 +23,23 @@ class CartItemService:
             if cart is None:
                 cart = await self.cart_repository.create_cart(self.session, user_id)
 
+            product = await self.product_repository.get_product_by_id(self.session, cart_item_model.product_id)
+
+            if product.quantity < cart_item_model.quantity:
+                raise PermissibleQuantityExceededError
+
+            update_product_quantity = product.quantity - cart_item_model.quantity
+
             cart_item_model_to_db = CartItem(
                 cart_id=cart.cart_id,
                 product_id=cart_item_model.product_id,
                 quantity=cart_item_model.quantity,
+            )
+
+            await self.product_repository.change_product_quantity(
+                self.session,
+                cart_item_model.product_id,
+                update_product_quantity,
             )
 
             created_cart_item = await self.cart_item_repository.add_or_increment(self.session, cart_item_model_to_db)
