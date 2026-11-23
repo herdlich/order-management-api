@@ -16,10 +16,13 @@ class ProductCreate(BaseModel):
 class ProductUpdate(BaseModel):
     product_name: str | None = Field(default=None, min_length=3)
     product_cost: Decimal | None = None
+    quantity: int | None = Field(default=None, ge=0)
 
 
 class ProductResponse(SchemaBase):
     product_id: int
     product_name: str
     product_cost: Decimal
+    quantity: int
+    status: str
     created_at: datetime
