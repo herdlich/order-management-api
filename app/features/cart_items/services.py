@@ -5,7 +5,7 @@ from app.features.cart_items.repository import CartItemDatabase
 from app.features.cart_items.schemas import CartItemCreate
 from app.features.carts.repository import CartDatabase
 from app.features.products.repository import ProductDatabase
-from app.exceptions.base import PermissibleQuantityExceededError
+from app.exceptions.base import PermissibleQuantityExceededError, CartItemNotFoundError
 
 
 class CartItemService:
@@ -63,11 +63,29 @@ class CartItemService:
         await self.session.commit()
 
     async def change_cart_item_quantity(self, user_id: int, cart_item_id: int, quantity: int) -> None:
+        cart_item = await self.cart_item_repository.get_cart_item_by_its_id(self.session, cart_item_id)
+
+        if cart_item is None:
+            raise CartItemNotFoundError
+
+        product = await self.product_repository.get_product_by_id(self.session, cart_item.product_id)
+
+        if product.quantity < quantity:
+            raise PermissibleQuantityExceededError
+
+        updated_quantity = product.quantity - quantity
+
         await self.cart_item_repository.change_cart_item_quantity_by_its_id(
             self.session,
             user_id,
             cart_item_id,
             quantity,
+        )
+
+        await self.product_repository.change_product_quantity(
+            self.session,
+            product.product_id,
+            updated_quantity,
         )
 
         await self.session.commit()

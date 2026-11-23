@@ -86,3 +86,9 @@ class CartItemDatabase:
             raise CartItemNotFoundError
 
         cart_item.quantity = quantity
+
+    @staticmethod
+    async def get_cart_item_by_its_id(session: AsyncSession, cart_item_id: int) -> CartItem | None:
+        result = await session.get(CartItem, cart_item_id)
+
+        return result

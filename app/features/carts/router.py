@@ -70,3 +70,9 @@ async def change_cart_item_quantity_endpoint(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Item with id {cart_item_id} was not found in your cart",
         )
+
+    except PermissibleQuantityExceededError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Quantity exceeded",
+        )
