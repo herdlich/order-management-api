@@ -92,3 +92,13 @@ class CartItemDatabase:
         result = await session.get(CartItem, cart_item_id)
 
         return result
+
+    @staticmethod
+    async def get_cart_item_by_cart_and_product_ids(session: AsyncSession, cart_id: int, product_id: int):
+        stmt = select(CartItem).where(
+            CartItem.cart_id == cart_id,
+            CartItem.product_id == product_id,
+        )
+        result = await session.scalar(stmt)
+
+        return result

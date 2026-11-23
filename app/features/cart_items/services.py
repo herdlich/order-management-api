@@ -4,8 +4,10 @@ from app.features.cart_items.models import CartItem
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.cart_items.schemas import CartItemCreate
 from app.features.carts.repository import CartDatabase
+from app.features.products.models import Product
 from app.features.products.repository import ProductDatabase
-from app.exceptions.base import PermissibleQuantityExceededError, CartItemNotFoundError
+from app.exceptions.base import PermissibleQuantityExceededError, CartItemNotFoundError, ProductNotFoundError
+from app.enums import ProductStatus
 
 
 class CartItemService:
@@ -18,14 +20,27 @@ class CartItemService:
 
     async def cart_item_create(self, cart_item_model: CartItemCreate, user_id: int) -> CartItem | None:
         try:
+            product = await self.product_repository.get_product_by_id(self.session, cart_item_model.product_id)
+
+            if product is None or product.status == ProductStatus.ARCHIVED:
+                raise ProductNotFoundError
+
             cart = await self.cart_repository.get_cart_by_user_id(self.session, user_id)
 
             if cart is None:
                 cart = await self.cart_repository.create_cart(self.session, user_id)
 
-            product = await self.product_repository.get_product_by_id(self.session, cart_item_model.product_id)
+            existing_item = await self.cart_item_repository.get_cart_item_by_cart_and_product_ids(
+                self.session,
+                cart.cart_id,
+                product.product_id,
+            )
 
-            if product.quantity < cart_item_model.quantity:
+            total_quantity = (
+                existing_item.quantity if existing_item else 0
+            ) + cart_item_model.quantity
+
+            if product.quantity < total_quantity:
                 raise PermissibleQuantityExceededError
 
             cart_item_model_to_db = CartItem(
