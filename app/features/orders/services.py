@@ -75,3 +75,8 @@ class OrderService:
         order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
 
         return order
+
+    async def get_all_orders(self, user_id: int):
+        orders = await self.order_repository.get_all_orders_by_user_id(self.session, user_id)
+
+        return orders

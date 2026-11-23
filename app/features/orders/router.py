@@ -37,3 +37,11 @@ async def get_order_endpoint(
             status_code=404,
             detail=f"Order with id {order_id} not found",
         )
+
+
+@router.get("/", response_model=list[OrderResponse], summary="Get Orders")
+async def get_all_orders_endpoint(
+        service: Annotated[OrderService, Depends(get_order_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    return await service.get_all_orders(current_user.user_id)

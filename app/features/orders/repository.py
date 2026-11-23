@@ -34,3 +34,10 @@ class OrderDatabase:
             raise OrderNotFoundError
 
         return result
+
+    @staticmethod
+    async def get_all_orders_by_user_id(session: AsyncSession, user_id: int):
+        stmt = select(Order).where(Order.user_id == user_id)
+        result = await session.scalars(stmt)
+
+        return result
