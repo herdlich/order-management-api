@@ -19,6 +19,10 @@ class Product(Base):
     product_name: Mapped[str] = mapped_column(nullable=False)
 
     product_cost: Mapped[Decimal]
+
+    quantity: Mapped[int] = mapped_column(nullable=False, default='1')
+
+    status: Mapped[str] = mapped_column(nullable=False, default="in_stock")
     
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -34,4 +38,12 @@ class Product(Base):
             "length(trim(product_name)) >= 3",
             name="check_product_name_min_length",
         ),
+        CheckConstraint(
+            "quantity >= 0",
+            name="check_quantity_positive",
+        ),
+        CheckConstraint(
+            "status IN ('in_stock', 'out_of_stock')",
+            name="check_valid_product_status",
+        )
     )
