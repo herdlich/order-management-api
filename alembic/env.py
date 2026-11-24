@@ -8,6 +8,11 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 from app.db.base import Base
+from app.features.cart_items import models  # noqa: F401
+from app.features.carts import models  # noqa: F401
+from app.features.orders import models  # noqa: F401
+from app.features.products import models  # noqa: F401
+from app.features.users import models  # noqa: F401
 
 load_dotenv()
 
