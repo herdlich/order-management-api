@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import get_current_user, get_product_service
 from app.exceptions.base import (
+    NonExistentPageError,
     NoPermissionError,
     ProductAlreadyExistsError,
-    UnknownProductCreateError,
-    NonExistentPageError,
     ProductNotFoundError,
+    UnknownProductCreateError,
 )
 from app.features.products.schemas import ProductCreate, ProductResponse, ProductUpdate
 from app.features.products.services import ProductService
@@ -90,7 +90,7 @@ async def delete_product_endpoint(
     try:
         await service.delete_product(current_user.user_id, product_id)
 
-        return None
+        return
 
     except ProductNotFoundError:
         raise HTTPException(

@@ -4,9 +4,9 @@ from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exceptions.base import CartItemNotFoundError
 from app.features.cart_items.models import CartItem
 from app.features.carts.models import Cart
-from app.exceptions.base import CartItemNotFoundError
 
 
 class CartItemDatabase:

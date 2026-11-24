@@ -9,12 +9,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 from app.db.base import Base
 
-from app.features.cart_items import models
-from app.features.carts import models
-from app.features.orders import models
-from app.features.products import models
-from app.features.users import models
-
 load_dotenv()
 
 config = context.config

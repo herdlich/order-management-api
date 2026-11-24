@@ -1,11 +1,15 @@
-from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
 import math
 
-from app.exceptions.base import ProductAlreadyExistsError
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.exceptions.base import (
+    NonExistentPageError,
+    ProductAlreadyExistsError,
+    ProductNotFoundError,
+)
 from app.features.cart_items.models import CartItem
 from app.features.products.models import Product
-from app.exceptions.base import NonExistentPageError, ProductNotFoundError
 
 
 class ProductDatabase:

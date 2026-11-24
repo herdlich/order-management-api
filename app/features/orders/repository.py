@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.features.orders.models import Order, OrderItem
 from app.exceptions.base import OrderNotFoundError
+from app.features.orders.models import Order, OrderItem
 
 
 class OrderDatabase:

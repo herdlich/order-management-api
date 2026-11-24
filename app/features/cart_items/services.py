@@ -1,13 +1,16 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.enums import ProductStatus
+from app.exceptions.base import (
+    CartItemNotFoundError,
+    PermissibleQuantityExceededError,
+    ProductNotFoundError,
+)
 from app.features.cart_items.models import CartItem
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.cart_items.schemas import CartItemCreate
 from app.features.carts.repository import CartDatabase
-from app.features.products.models import Product
 from app.features.products.repository import ProductDatabase
-from app.exceptions.base import PermissibleQuantityExceededError, CartItemNotFoundError, ProductNotFoundError
-from app.enums import ProductStatus
 
 
 class CartItemService:

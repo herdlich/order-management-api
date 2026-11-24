@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.dependencies import get_current_user, get_order_service
+from app.exceptions.base import CartIsEmptyError, OrderNotFoundError
 from app.features.orders.schemas import OrderResponse
 from app.features.orders.services import OrderService
-from app.exceptions.base import OrderNotFoundError, CartIsEmptyError
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 

@@ -7,10 +7,14 @@ from app.api.dependencies import (
     get_cart_service,
     get_current_user,
 )
-from app.features.cart_items.schemas import CartItemCreate, CartItemResponse, CartItemUpdate
+from app.exceptions.base import CartItemNotFoundError, PermissibleQuantityExceededError
+from app.features.cart_items.schemas import (
+    CartItemCreate,
+    CartItemResponse,
+    CartItemUpdate,
+)
 from app.features.cart_items.services import CartItemService
 from app.features.carts.services import CartService
-from app.exceptions.base import CartItemNotFoundError, PermissibleQuantityExceededError
 
 router = APIRouter(prefix="/carts", tags=["Carts"])
 

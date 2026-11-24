@@ -5,17 +5,18 @@ Revises: 78001ede7b35
 Create Date: 2026-11-23 12:18:29.549725
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+from alembic import op
+
 # revision identifiers, used by Alembic.
 revision: str = '7657478c3cbb'
-down_revision: Union[str, Sequence[str], None] = '78001ede7b35'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = '78001ede7b35'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 product_status_enum = postgresql.ENUM(
     'IN_STOCK', 'OUT_OF_STOCK', 'ARCHIVED', name='productstatus'

@@ -5,3 +5,10 @@ class ProductStatus(str, Enum):
     IN_STOCK = "in_stock"
     OUT_OF_STOCK = "out_of_stock"
     ARCHIVED = "archived"
+
+
+class OrderStatus(str, Enum):
+    PENDING = "pending"
+    PAYED = "payed"
+    CANCELED = "canceled"
+    COMPLETED = "completed"

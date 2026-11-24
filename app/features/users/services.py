@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions.base import UnauthorizedError, UnknownUserCreateError
+from app.features.carts.repository import CartDatabase
 from app.features.users.models import User
 from app.features.users.repository import UserDatabase
 from app.features.users.schemas import TokenResponse, UserCreate, UserLogin
-from app.features.carts.repository import CartDatabase
 from app.security.jwt_tokens import create_access_token, decode_access_token
 from app.security.password import hash_password
 
