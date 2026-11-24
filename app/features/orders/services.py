@@ -6,6 +6,7 @@ from app.exceptions.base import (
     OrderNotFoundError,
     PermissibleQuantityExceededError,
     ProductNotFoundError,
+    InvalidOrderStatusTransitionError,
 )
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.carts.repository import CartDatabase
@@ -135,3 +136,18 @@ class OrderService:
             await self.session.rollback()
 
             raise
+
+    async def pay_order(self, user_id: int, order_id: int):
+        order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
+
+        if order is None:
+            raise OrderNotFoundError
+
+        if order.status != OrderStatus.PENDING:
+            raise InvalidOrderStatusTransitionError
+
+        order.status = OrderStatus.PAYED
+
+        await self.session.commit()
+        await self.session.refresh(order)
+        return order

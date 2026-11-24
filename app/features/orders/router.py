@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import get_current_user, get_order_service
 from app.exceptions.base import (
@@ -10,6 +10,7 @@ from app.exceptions.base import (
     OrderNotFoundError,
     PermissibleQuantityExceededError,
     ProductNotFoundError,
+    InvalidOrderStatusTransitionError
 )
 from app.features.orders.schemas import OrderResponse
 from app.features.orders.services import OrderService
@@ -91,4 +92,20 @@ async def cancel_order_endpoint(
         raise HTTPException(
             status_code=422,
             detail=f"Order with id {order_id} cant be cancelled",
+        )
+
+
+@router.post("/{order_id}/pay", response_model=OrderResponse, summary="Pay Order")
+async def pay_order_endpoint(
+        order_id: int,
+        service: Annotated[OrderService, Depends(get_order_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    try:
+        return await service.pay_order(current_user.user_id, order_id)
+
+    except InvalidOrderStatusTransitionError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Invalid order state transition",
         )

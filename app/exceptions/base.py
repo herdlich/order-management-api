@@ -60,3 +60,7 @@ class CartIsEmptyError(Exception):
 
 class PermissibleQuantityExceededError(Exception):
     pass
+
+
+class InvalidOrderStatusTransitionError(Exception):
+    pass
