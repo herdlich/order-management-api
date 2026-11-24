@@ -26,19 +26,19 @@ async def create_order_endpoint(service: Annotated[OrderService, Depends(get_ord
 
     except CartIsEmptyError:
         raise HTTPException(
-            status_code=422,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Your cart is empty",
         )
 
     except ProductNotFoundError:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Product in your cart not found",
         )
 
     except PermissibleQuantityExceededError:
         raise HTTPException(
-            status_code=422,
+            status_code=status.HTTP_409_CONFLICT,
             detail="Quantity of the product in your cart exceeded",
         )
 
@@ -54,7 +54,7 @@ async def get_order_endpoint(
 
     except OrderNotFoundError:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Order with id {order_id} not found",
         )
 
@@ -78,19 +78,19 @@ async def cancel_order_endpoint(
 
     except OrderNotFoundError:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Order with id {order_id} not found",
         )
 
     except OrderAlreadyCancelledError:
         raise HTTPException(
-            status_code=422,
+            status_code=status.HTTP_409_CONFLICT,
             detail=f"Order with id {order_id} already cancelled",
         )
 
     except OrderCantBeCancelledError:
         raise HTTPException(
-            status_code=422,
+            status_code=status.HTTP_409_CONFLICT,
             detail=f"Order with id {order_id} cant be cancelled",
         )
 
