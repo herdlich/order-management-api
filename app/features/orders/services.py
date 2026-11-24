@@ -1,4 +1,5 @@
-from app.exceptions.base import CartIsEmptyError
+from app.enums import OrderStatus
+from app.exceptions.base import CartIsEmptyError, OrderNotFoundError, OrderAlreadyCancelledError, OrderCantBeCancelledError
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.carts.repository import CartDatabase
 from app.features.orders.models import Order, OrderItem
@@ -80,3 +81,39 @@ class OrderService:
         orders = await self.order_repository.get_all_orders_by_user_id(self.session, user_id)
 
         return orders
+
+    async def cancel_order(self, user_id: int, order_id: int):
+        try:
+            order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
+
+            if order is None:
+                raise OrderNotFoundError
+
+            if order.status == OrderStatus.CANCELLED:
+                raise OrderAlreadyCancelledError
+
+            if order.status == OrderStatus.COMPLETED:
+                raise OrderCantBeCancelledError
+
+            order.status = OrderStatus.CANCELLED
+
+            order_items = await self.order_repository.get_all_order_items_by_order_id(
+                self.session,
+                order_id,
+            )
+
+            for item in order_items:
+                product = await self.product_repository.get_product_by_id(self.session, item.product_id)
+
+                if product is not None:
+                    product.quantity += item.quantity
+
+            await self.session.commit()
+            await self.session.refresh(order)
+
+            return order
+
+        except Exception:
+            await self.session.rollback()
+
+            raise

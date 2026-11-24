@@ -46,6 +46,14 @@ class OrderNotFoundError(Exception):
     pass
 
 
+class OrderAlreadyCancelledError(Exception):
+    pass
+
+
+class OrderCantBeCancelledError(Exception):
+    pass
+
+
 class CartIsEmptyError(Exception):
     pass
 

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.dependencies import get_current_user, get_order_service
-from app.exceptions.base import CartIsEmptyError, OrderNotFoundError
+from app.exceptions.base import CartIsEmptyError, OrderNotFoundError, OrderAlreadyCancelledError, OrderCantBeCancelledError
 from app.features.orders.schemas import OrderResponse
 from app.features.orders.services import OrderService
 
@@ -45,3 +45,31 @@ async def get_all_orders_endpoint(
         current_user: Annotated[dict, Depends(get_current_user)],
 ):
     return await service.get_all_orders(current_user.user_id)
+
+
+@router.post("/{order_id}/cancel", response_model=OrderResponse, summary="Cancel Order")
+async def cancel_order_endpoint(
+        order_id: int,
+        service: Annotated[OrderService, Depends(get_order_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    try:
+        return await service.cancel_order(current_user.user_id, order_id)
+
+    except OrderNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Order with id {order_id} not found",
+        )
+
+    except OrderAlreadyCancelledError:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Order with id {order_id} already cancelled",
+        )
+
+    except OrderCantBeCancelledError:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Order with id {order_id} cant be cancelled",
+        )

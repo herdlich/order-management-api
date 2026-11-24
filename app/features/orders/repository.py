@@ -41,3 +41,10 @@ class OrderDatabase:
         result = await session.scalars(stmt)
 
         return result
+
+    @staticmethod
+    async def get_all_order_items_by_order_id(session: AsyncSession, order_id: int):
+        stmt = select(OrderItem).where(OrderItem.order_id == order_id)
+        result = await session.scalars(stmt)
+
+        return list(result.all())
