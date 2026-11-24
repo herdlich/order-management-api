@@ -1,10 +1,11 @@
 from app.enums import OrderStatus
-from app.exceptions.base import CartIsEmptyError, OrderNotFoundError, OrderAlreadyCancelledError, OrderCantBeCancelledError
+from app.exceptions.base import CartIsEmptyError, OrderNotFoundError, OrderAlreadyCancelledError, OrderCantBeCancelledError, PermissibleQuantityExceededError, ProductNotFoundError
 from app.features.cart_items.repository import CartItemDatabase
 from app.features.carts.repository import CartDatabase
 from app.features.orders.models import Order, OrderItem
 from app.features.orders.repository import OrderDatabase
 from app.features.products.repository import ProductDatabase
+from app.enums import ProductStatus
 
 
 class OrderService:
@@ -22,12 +23,15 @@ class OrderService:
             # order create
             user_cart = await self.cart_repository.get_cart_by_user_id(self.session, user_id)
 
-            cart_items_with_cost = await self.product_repository.get_products_by_cart_id(self.session,
+            if user_cart is None:
+                raise CartIsEmptyError
+
+            cart_items_with_products = await self.product_repository.get_products_by_cart_id(self.session,
                                                                                          user_cart.cart_id)
 
             total_amount = sum(
-                cost * item.quantity
-                for item, cost in cart_items_with_cost
+                product.product_cost * item.quantity
+                for item, product in cart_items_with_products
             )
 
             if total_amount <= 0:
@@ -45,11 +49,22 @@ class OrderService:
 
             order_items = []
 
-            for item, cost in cart_items_with_cost:
+            for item, product in cart_items_with_products:
+                if product is None:
+                    raise ProductNotFoundError
+
+                if product.status == ProductStatus.ARCHIVED:
+                    raise ProductNotFoundError
+
+                if product.quantity < item.quantity:
+                    raise PermissibleQuantityExceededError
+
+                product.quantity -= item.quantity
+
                 order_item = OrderItem(
                     order_id=order.order_id,
                     product_id=item.product_id,
-                    unit_price=cost,
+                    unit_price=product.product_cost,
                     quantity=item.quantity,
                 )
 
@@ -61,16 +76,13 @@ class OrderService:
 
             await self.session.commit()
 
+            await self.session.refresh(order)
+
             return order
 
-        except CartIsEmptyError:
+        except Exception:
             await self.session.rollback()
-
-            raise CartIsEmptyError
-
-        except Exception as e:
-            await self.session.rollback()
-            raise e
+            raise
 
     async def get_order(self, user_id: int, order_id: int):
         order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)

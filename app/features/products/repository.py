@@ -35,7 +35,7 @@ class ProductDatabase:
     @staticmethod
     async def get_products_by_cart_id(session: AsyncSession, cart_id: int):
         stmt = (
-            select(CartItem, Product.product_cost)
+            select(CartItem, Product)
             .join(Product, CartItem.product_id == Product.product_id)
             .where(CartItem.cart_id == cart_id)
         )
