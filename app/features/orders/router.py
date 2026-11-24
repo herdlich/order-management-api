@@ -3,7 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.dependencies import get_current_user, get_order_service
-from app.exceptions.base import CartIsEmptyError, OrderNotFoundError, OrderAlreadyCancelledError, OrderCantBeCancelledError
+from app.exceptions.base import (
+    CartIsEmptyError,
+    OrderAlreadyCancelledError,
+    OrderCantBeCancelledError,
+    OrderNotFoundError,
+    PermissibleQuantityExceededError,
+    ProductNotFoundError,
+)
 from app.features.orders.schemas import OrderResponse
 from app.features.orders.services import OrderService
 
@@ -20,6 +27,18 @@ async def create_order_endpoint(service: Annotated[OrderService, Depends(get_ord
         raise HTTPException(
             status_code=422,
             detail="Your cart is empty",
+        )
+
+    except ProductNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Product in your cart not found",
+        )
+
+    except PermissibleQuantityExceededError:
+        raise HTTPException(
+            status_code=422,
+            detail="Quantity of the product in your cart exceeded",
         )
 
 
