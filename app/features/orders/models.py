@@ -5,6 +5,7 @@ from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Numeric, String, f
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
+from app.enums import OrderStatus
 
 
 class Order(Base):
@@ -14,7 +15,11 @@ class Order(Base):
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
 
-    status: Mapped[str] = mapped_column(String(20), default="pending")
+    status: Mapped[OrderStatus] = mapped_column(
+        nullable=False,
+        default=OrderStatus.PENDING,
+        server_default=OrderStatus.PENDING,
+    )
 
     total_amount: Mapped[Decimal] = mapped_column(Numeric(12, 2))
 
@@ -28,6 +33,10 @@ class Order(Base):
             "total_amount > 0",
             name="ck_orders_total_amount",
         ),
+        CheckConstraint(
+            "status IN ('PENDING', 'PAYED', 'CANCELLED', 'COMPLETED')",
+            name="check_valid_order_status",
+        )
     )
 
 

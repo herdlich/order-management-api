@@ -10,5 +10,5 @@ class ProductStatus(str, Enum):
 class OrderStatus(str, Enum):
     PENDING = "pending"
     PAYED = "payed"
-    CANCELED = "canceled"
+    CANCELLED = "cancelled"
     COMPLETED = "completed"
