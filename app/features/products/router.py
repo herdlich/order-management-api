@@ -6,10 +6,11 @@ from app.api.dependencies import get_current_user, get_product_service
 from app.exceptions.base import (
     NonExistentPageError,
     NoPermissionError,
+    ProductAlreadyArchivedError,
     ProductAlreadyExistsError,
     ProductNotFoundError,
+    ProductNotInArchiveError,
     UnknownProductCreateError,
-    ProductAlreadyArchivedError,
 )
 from app.features.products.schemas import ProductCreate, ProductResponse, ProductUpdate
 from app.features.products.services import ProductService
@@ -110,4 +111,26 @@ async def archive_product_endpoint(
         raise HTTPException(
             status_code=409,
             detail="This product is already archived",
+        )
+
+
+@router.patch("/{product_id}/unarchive", status_code=status.HTTP_204_NO_CONTENT, summary="Unarchive Product")
+async def unarchive_product_endpoint(
+        product_id: int,
+        service: Annotated[ProductService, Depends(get_product_service)],
+        current_user: Annotated[dict, Depends(get_current_user)],
+):
+    try:
+        return await service.unarchive_product(current_user.user_id, product_id)
+
+    except ProductNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Product with this id does not exist"
+        )
+
+    except ProductNotInArchiveError:
+        raise HTTPException(
+            status_code=409,
+            detail="This product not archived",
         )

@@ -1,12 +1,17 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions.base import NoPermissionError, UnknownProductCreateError, ProductAlreadyArchivedError
+from app.enums import ProductStatus
+from app.exceptions.base import (
+    NoPermissionError,
+    ProductAlreadyArchivedError,
+    ProductNotFoundError,
+    ProductNotInArchiveError,
+    UnknownProductCreateError,
+)
 from app.features.products.models import Product
 from app.features.products.repository import ProductDatabase
 from app.features.products.schemas import ProductCreate, ProductUpdate
 from app.features.users.repository import UserDatabase
-
-from app.enums import ProductStatus
 
 PAGE_SIZE = 10
 
@@ -46,6 +51,9 @@ class ProductService:
     async def get_product_by_id(self, product_id: int) -> Product:
         product = await self.product_repository.get_product_by_id(self.session, product_id)
 
+        if product.status == ProductStatus.ARCHIVED:
+            raise ProductNotFoundError
+
         return product
 
     async def update_product(self, product_id: int, data: ProductUpdate, user_id: int):
@@ -71,5 +79,18 @@ class ProductService:
             raise ProductAlreadyArchivedError
 
         product.status = ProductStatus.ARCHIVED
+
+        await self.session.commit()
+
+    async def unarchive_product(self, user_id: int, product_id: int) -> None:
+        if not await self.user_repository.check_is_admin(self.session, user_id):
+            raise NoPermissionError
+
+        product = await self.product_repository.get_product_by_id(self.session, product_id)
+
+        if product.status != ProductStatus.ARCHIVED:
+            raise ProductNotInArchiveError
+
+        product.status = (ProductStatus.IN_STOCK if product.quantity > 0 else ProductStatus.OUT_OF_STOCK)
 
         await self.session.commit()

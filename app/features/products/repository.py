@@ -81,7 +81,7 @@ class ProductDatabase:
     async def get_product_by_id(session: AsyncSession, product_id: int) -> Product:
         result = await session.get(Product, product_id)
 
-        if result is None or result.status == ProductStatus.ARCHIVED:
+        if result is None:
             raise ProductNotFoundError
 
         # noinspection PyTypeChecker
