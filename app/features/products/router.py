@@ -96,7 +96,7 @@ async def delete_product_endpoint(
         current_user: Annotated[dict, Depends(get_current_user)],
 ):
     try:
-        await service.delete_product(current_user.user_id, product_id)
+        await service.archive_product(current_user.user_id, product_id)
 
         return
 

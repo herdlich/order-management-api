@@ -61,7 +61,7 @@ class ProductService:
 
         return await self.product_repository.update_product_in_database(self.session, product)
 
-    async def delete_product(self, user_id: int, product_id: int):
+    async def archive_product(self, user_id: int, product_id: int):
         if not await self.user_repository.check_is_admin(self.session, user_id):
             raise NoPermissionError
 
