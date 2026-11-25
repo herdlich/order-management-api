@@ -43,7 +43,7 @@ async def get_all_cart_items_endpoint(
     return await cart_service.get_all_cart_items(current_user.user_id)
 
 
-@router.delete("{cart_item_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete My Cart Item")
+@router.delete("/{cart_item_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete My Cart Item")
 async def delete_cart_item_endpoint(
         cart_item_id: int,
         cart_item_service: Annotated[CartItemService, Depends(get_cart_item_service)],
