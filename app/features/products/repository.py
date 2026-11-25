@@ -10,6 +10,7 @@ from app.exceptions.base import (
 )
 from app.features.cart_items.models import CartItem
 from app.features.products.models import Product
+from app.enums import ProductStatus
 
 
 class ProductDatabase:
@@ -53,7 +54,7 @@ class ProductDatabase:
             print("page_size must be greater than 0")  # temporary replacement for logs
             raise
 
-        count_stmt = select(func.count(Product.product_id))
+        count_stmt = select(func.count(Product.product_id)).where(Product.status!=ProductStatus.ARCHIVED)
         total_count = await session.scalar(count_stmt) or 0
 
         if total_count == 0 and page_number > 1:
@@ -67,6 +68,7 @@ class ProductDatabase:
         offset = (page_number - 1) * page_size
         stmt = (
             select(*Product.__table__.c)
+            .where(Product.status != ProductStatus.ARCHIVED)
             .order_by(Product.product_id.asc())
             .offset(offset)
             .limit(page_size)
@@ -79,7 +81,7 @@ class ProductDatabase:
     async def get_product_by_id(session: AsyncSession, product_id: int) -> Product:
         result = await session.get(Product, product_id)
 
-        if result is None:
+        if result is None or result.status == ProductStatus.ARCHIVED:
             raise ProductNotFoundError
 
         # noinspection PyTypeChecker
