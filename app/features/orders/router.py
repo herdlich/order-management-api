@@ -109,3 +109,9 @@ async def pay_order_endpoint(
             status_code=status.HTTP_409_CONFLICT,
             detail="Invalid order state transition",
         )
+
+    except OrderNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Order with id {order_id} not found",
+        )
