@@ -90,7 +90,7 @@ async def update_product_endpoint(
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete Product")
-async def delete_product_endpoint(
+async def archive_product_endpoint(
         product_id: int,
         service: Annotated[ProductService, Depends(get_product_service)],
         current_user: Annotated[dict, Depends(get_current_user)],
