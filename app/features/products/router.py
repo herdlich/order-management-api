@@ -78,7 +78,14 @@ async def update_product_endpoint(
         service: Annotated[ProductService, Depends(get_product_service)],
         current_user: Annotated[dict, Depends(get_current_user)],
 ):
-    return await service.update_product(product_id, data, current_user.user_id)
+    try:
+        return await service.update_product(product_id, data, current_user.user_id)
+
+    except ProductNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Product with this id does not exist"
+        )
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete Product")
