@@ -1,10 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions.base import NoPermissionError, UnknownProductCreateError
+from app.exceptions.base import NoPermissionError, UnknownProductCreateError, ProductAlreadyArchivedError
 from app.features.products.models import Product
 from app.features.products.repository import ProductDatabase
 from app.features.products.schemas import ProductCreate, ProductUpdate
 from app.features.users.repository import UserDatabase
+
+from app.enums import ProductStatus
 
 PAGE_SIZE = 10
 
@@ -63,6 +65,11 @@ class ProductService:
         if not await self.user_repository.check_is_admin(self.session, user_id):
             raise NoPermissionError
 
-        await self.product_repository.delete_product_from_database(self.session, product_id)
+        product = await self.product_repository.get_product_by_id(self.session, product_id)
+
+        if product.status == ProductStatus.ARCHIVED:
+            raise ProductAlreadyArchivedError
+
+        product.status = ProductStatus.ARCHIVED
 
         await self.session.commit()

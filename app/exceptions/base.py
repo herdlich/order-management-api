@@ -38,6 +38,10 @@ class ProductNotFoundError(Exception):
     pass
 
 
+class ProductAlreadyArchivedError(Exception):
+    pass
+
+
 class CartItemNotFoundError(Exception):
     pass
 

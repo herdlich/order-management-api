@@ -9,6 +9,7 @@ from app.exceptions.base import (
     ProductAlreadyExistsError,
     ProductNotFoundError,
     UnknownProductCreateError,
+    ProductAlreadyArchivedError,
 )
 from app.features.products.schemas import ProductCreate, ProductResponse, ProductUpdate
 from app.features.products.services import ProductService
@@ -103,4 +104,10 @@ async def delete_product_endpoint(
         raise HTTPException(
             status_code=404,
             detail="Product with this id does not exist"
+        )
+
+    except ProductAlreadyArchivedError:
+        raise HTTPException(
+            status_code=409,
+            detail="This product is already archived",
         )
