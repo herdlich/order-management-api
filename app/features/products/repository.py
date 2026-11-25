@@ -8,6 +8,7 @@ from app.exceptions.base import (
     NonExistentPageError,
     ProductAlreadyExistsError,
     ProductNotFoundError,
+    PageSizeMustBeGreaterThanZeroError,
 )
 from app.features.cart_items.models import CartItem
 from app.features.products.models import Product
@@ -52,7 +53,7 @@ class ProductDatabase:
 
         if page_size < 1:
             print("page_size must be greater than 0")  # temporary replacement for logs
-            raise
+            raise PageSizeMustBeGreaterThanZeroError
 
         count_stmt = select(func.count(Product.product_id)).where(Product.status != ProductStatus.ARCHIVED)
         total_count = await session.scalar(count_stmt) or 0

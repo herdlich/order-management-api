@@ -46,6 +46,10 @@ class ProductNotInArchiveError(Exception):
     pass
 
 
+class PageSizeMustBeGreaterThanZeroError(Exception):
+    pass
+
+
 class CartItemNotFoundError(Exception):
     pass
 

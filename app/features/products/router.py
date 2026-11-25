@@ -11,6 +11,7 @@ from app.exceptions.base import (
     ProductNotFoundError,
     ProductNotInArchiveError,
     UnknownProductCreateError,
+    PageSizeMustBeGreaterThanZeroError,
 )
 from app.features.products.schemas import ProductCreate, ProductResponse, ProductUpdate
 from app.features.products.services import ProductService
@@ -55,6 +56,12 @@ async def get_all_products_on_the_page_endpoint(
         raise HTTPException(
             status_code=404,
             detail="Page with this number does not exist"
+        )
+
+    except PageSizeMustBeGreaterThanZeroError:
+        raise HTTPException(
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to load the list of products; please try again later",
         )
 
 
