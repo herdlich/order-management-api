@@ -5,12 +5,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.api.dependencies import get_current_user, get_order_service
 from app.exceptions.base import (
     CartIsEmptyError,
+    InvalidOrderStatusTransitionError,
     OrderAlreadyCancelledError,
     OrderCantBeCancelledError,
     OrderNotFoundError,
     PermissibleQuantityExceededError,
     ProductNotFoundError,
-    InvalidOrderStatusTransitionError
 )
 from app.features.orders.schemas import OrderResponse
 from app.features.orders.services import OrderService

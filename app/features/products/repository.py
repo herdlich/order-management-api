@@ -3,6 +3,7 @@ import math
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.enums import ProductStatus
 from app.exceptions.base import (
     NonExistentPageError,
     ProductAlreadyExistsError,
@@ -10,7 +11,6 @@ from app.exceptions.base import (
 )
 from app.features.cart_items.models import CartItem
 from app.features.products.models import Product
-from app.enums import ProductStatus
 
 
 class ProductDatabase:
