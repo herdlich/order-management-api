@@ -22,7 +22,7 @@ class ProductService:
         self.product_repository = product_repository
         self.user_repository = user_repository
 
-    async def product_create(self, product_model: ProductCreate, user_id: int):
+    async def create_product(self, product_model: ProductCreate, user_id: int):
         if not await self.user_repository.check_is_admin(self.session, user_id):
             raise NoPermissionError
 
@@ -39,8 +39,8 @@ class ProductService:
 
         return created_product
 
-    async def get_all_products_on_the_page(self, page_number: int) -> list[Product]:
-        products = await self.product_repository.get_all_products_on_the_page_database(
+    async def list_products(self, page_number: int) -> list[Product]:
+        products = await self.product_repository.list_products_from_database(
             self.session,
             page_size=PAGE_SIZE,
             page_number=page_number,

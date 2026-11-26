@@ -21,7 +21,7 @@ class CartItemService:
         self.cart_repository = cart_repository
         self.product_repository = product_repository
 
-    async def cart_item_create(self, cart_item_model: CartItemCreate, user_id: int) -> CartItem | None:
+    async def add_cart_item(self, cart_item_model: CartItemCreate, user_id: int) -> CartItem | None:
         try:
             product = await self.product_repository.get_product_by_id(self.session, cart_item_model.product_id)
 
@@ -72,7 +72,7 @@ class CartItemService:
 
         await self.session.commit()
 
-    async def change_cart_item_quantity(self, user_id: int, cart_item_id: int, quantity: int) -> None:
+    async def set_cart_item_quantity(self, user_id: int, cart_item_id: int, quantity: int) -> None:
         cart_item = await self.cart_item_repository.get_cart_item_by_its_id(self.session, cart_item_id)
 
         if cart_item is None:
@@ -83,7 +83,7 @@ class CartItemService:
         if product.quantity < quantity:
             raise PermissibleQuantityExceededError
 
-        await self.cart_item_repository.change_cart_item_quantity_by_its_id(
+        await self.cart_item_repository.set_cart_item_quantity_by_its_id(
             self.session,
             user_id,
             cart_item_id,

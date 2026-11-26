@@ -35,7 +35,7 @@ class CartItemDatabase:
         return result
 
     @staticmethod
-    async def get_all_cart_items_by_cart_id(session: AsyncSession, cart_id: int) -> Sequence[CartItem] | None:
+    async def list_cart_items(session: AsyncSession, *, cart_id: int) -> Sequence[CartItem] | None:
         stmt = select(CartItem).where(CartItem.cart_id == cart_id)
         result = await session.scalars(stmt)
 
@@ -65,7 +65,7 @@ class CartItemDatabase:
         await session.delete(cart_item)
 
     @staticmethod
-    async def change_cart_item_quantity_by_its_id(
+    async def set_cart_item_quantity_by_its_id(
             session: AsyncSession,
             user_id: int,
             cart_item_id: int,

@@ -23,7 +23,7 @@ router = APIRouter(prefix="/products", tags=["Products"])
 async def create_product_endpoint(data: ProductCreate, service: Annotated[ProductService, Depends(get_product_service)],
                                   current_user: Annotated[dict, Depends(get_current_user)]):
     try:
-        return await service.product_create(data, current_user.user_id)
+        return await service.create_product(data, current_user.user_id)
 
     except ProductAlreadyExistsError:
         raise HTTPException(
@@ -50,7 +50,7 @@ async def get_all_products_on_the_page_endpoint(
         service: Annotated[ProductService, Depends(get_product_service)],
 ):
     try:
-        return await service.get_all_products_on_the_page(page_number)
+        return await service.list_products(page_number)
 
     except NonExistentPageError:
         raise HTTPException(

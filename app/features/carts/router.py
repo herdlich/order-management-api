@@ -26,7 +26,7 @@ async def add_product_to_cart_endpoint(data: CartItemCreate,
     try:
         user_id = current_user.user_id
 
-        return await cart_item_service.cart_item_create(data, user_id)
+        return await cart_item_service.add_cart_item(data, user_id)
 
     except PermissibleQuantityExceededError:
         raise HTTPException(
@@ -60,14 +60,14 @@ async def delete_cart_item_endpoint(
 
 
 @router.patch("/{cart_item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def change_cart_item_quantity_endpoint(
+async def set_cart_item_quantity_endpoint(
         cart_item_id: int,
         data: CartItemUpdate,
         service: Annotated[CartItemService, Depends(get_cart_item_service)],
         current_user: Annotated[dict, Depends(get_current_user)],
 ):
     try:
-        await service.change_cart_item_quantity(current_user.user_id, cart_item_id, data.quantity)
+        await service.set_cart_item_quantity(current_user.user_id, cart_item_id, data.quantity)
 
     except CartItemNotFoundError:
         raise HTTPException(

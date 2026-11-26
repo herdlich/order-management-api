@@ -22,7 +22,7 @@ class OrderDatabase:
         await session.flush()
 
     @staticmethod
-    async def get_order_by_its_id(session: AsyncSession, user_id: int, order_id: int) -> Order | None:
+    async def get_order_by_id(session: AsyncSession, user_id: int, order_id: int) -> Order | None:
         stmt = select(Order).where(
             Order.user_id == user_id,
             Order.order_id == order_id,
@@ -36,14 +36,14 @@ class OrderDatabase:
         return result
 
     @staticmethod
-    async def get_all_orders_by_user_id(session: AsyncSession, user_id: int):
+    async def list_orders_by_user_id(session: AsyncSession, user_id: int):
         stmt = select(Order).where(Order.user_id == user_id)
         result = await session.scalars(stmt)
 
         return result
 
     @staticmethod
-    async def get_all_order_items_by_order_id(session: AsyncSession, order_id: int):
+    async def list_order_items(session: AsyncSession, order_id: int):
         stmt = select(OrderItem).where(OrderItem.order_id == order_id)
         result = await session.scalars(stmt)
 

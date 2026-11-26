@@ -92,18 +92,18 @@ class OrderService:
             raise
 
     async def get_order(self, user_id: int, order_id: int):
-        order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
+        order = await self.order_repository.get_order_by_id(self.session, user_id, order_id)
 
         return order
 
     async def get_all_orders(self, user_id: int):
-        orders = await self.order_repository.get_all_orders_by_user_id(self.session, user_id)
+        orders = await self.order_repository.list_orders_by_user_id(self.session, user_id)
 
         return orders
 
     async def cancel_order(self, user_id: int, order_id: int):
         try:
-            order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
+            order = await self.order_repository.get_order_by_id(self.session, user_id, order_id)
 
             if order is None:
                 raise OrderNotFoundError
@@ -116,7 +116,7 @@ class OrderService:
 
             order.status = OrderStatus.CANCELLED
 
-            order_items = await self.order_repository.get_all_order_items_by_order_id(
+            order_items = await self.order_repository.list_order_items(
                 self.session,
                 order_id,
             )
@@ -138,7 +138,7 @@ class OrderService:
             raise
 
     async def pay_order(self, user_id: int, order_id: int):
-        order = await self.order_repository.get_order_by_its_id(self.session, user_id, order_id)
+        order = await self.order_repository.get_order_by_id(self.session, user_id, order_id)
 
         if order is None:
             raise OrderNotFoundError

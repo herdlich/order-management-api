@@ -47,7 +47,7 @@ class ProductDatabase:
         return products.all()
 
     @staticmethod
-    async def get_all_products_on_the_page_database(session: AsyncSession, *, page_size: int, page_number: int) -> list:
+    async def list_products_from_database(session: AsyncSession, *, page_size: int, page_number: int) -> list:
         if page_number < 1:
             raise NonExistentPageError
 

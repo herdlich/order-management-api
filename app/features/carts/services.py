@@ -15,5 +15,5 @@ class CartService:
 
     async def get_all_cart_items(self, user_id: int):
         cart = await self.cart_repository.get_cart_by_user_id(self.session, user_id)
-        cart_items = await self.cart_item_repository.get_all_cart_items_by_cart_id(self.session, cart.cart_id)
+        cart_items = await self.cart_item_repository.list_cart_items(self.session, cart_id=cart.cart_id)
         return cart_items
