@@ -12,17 +12,17 @@ from app.features.carts.models import Cart
 class CartItemDatabase:
     @staticmethod
     async def add_or_increment(session: AsyncSession, cart_item_model: CartItem) -> CartItem | None:
-        stmt = insert(CartItem).values(
+        insert_stmt = insert(CartItem).values(
             cart_id=cart_item_model.cart_id,
             product_id=cart_item_model.product_id,
             quantity=cart_item_model.quantity,
         )
 
-        stmt = stmt.on_conflict_do_update(
+        stmt = insert_stmt.on_conflict_do_update(
             constraint="uq_cart_product",
             set_={
                 "quantity": (
-                        CartItem.quantity + stmt.excluded.quantity
+                        CartItem.quantity + insert_stmt.excluded.quantity
                 ),
             },
         ).returning(CartItem)
