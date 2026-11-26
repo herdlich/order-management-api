@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.dependencies import get_current_user, get_order_service
+from app.api.dependencies import CurrentUser, get_order_service
 from app.exceptions.base import (
     CartIsEmptyError,
     InvalidOrderStatusTransitionError,
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 
 @router.post("", response_model=OrderResponse, summary="Create Order")
 async def create_order_endpoint(service: Annotated[OrderService, Depends(get_order_service)],
-                                current_user: Annotated[dict, Depends(get_current_user)]) -> OrderResponse:
+                                current_user: CurrentUser) -> OrderResponse:
     try:
         return await service.create_order(current_user.user_id)
 
@@ -47,7 +47,7 @@ async def create_order_endpoint(service: Annotated[OrderService, Depends(get_ord
 async def get_order_endpoint(
         order_id: int,
         service: Annotated[OrderService, Depends(get_order_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         return await service.get_order(current_user.user_id, order_id)
@@ -62,7 +62,7 @@ async def get_order_endpoint(
 @router.get("/", response_model=list[OrderResponse], summary="Get Orders")
 async def get_all_orders_endpoint(
         service: Annotated[OrderService, Depends(get_order_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     return await service.get_all_orders(current_user.user_id)
 
@@ -71,7 +71,7 @@ async def get_all_orders_endpoint(
 async def cancel_order_endpoint(
         order_id: int,
         service: Annotated[OrderService, Depends(get_order_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         return await service.cancel_order(current_user.user_id, order_id)
@@ -99,7 +99,7 @@ async def cancel_order_endpoint(
 async def pay_order_endpoint(
         order_id: int,
         service: Annotated[OrderService, Depends(get_order_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         return await service.pay_order(current_user.user_id, order_id)

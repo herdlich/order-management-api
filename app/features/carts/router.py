@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import (
+    CurrentUser,
     get_cart_item_service,
     get_cart_service,
-    get_current_user,
 )
 from app.exceptions.base import CartItemNotFoundError, PermissibleQuantityExceededError
 from app.features.cart_items.schemas import (
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/carts", tags=["Carts"])
 @router.post("/my/items", response_model=CartItemResponse)
 async def add_product_to_cart_endpoint(data: CartItemCreate,
                                        cart_item_service: Annotated[CartItemService, Depends(get_cart_item_service)],
-                                       current_user: Annotated[dict, Depends(get_current_user)]):
+                                       current_user: CurrentUser):
     try:
         user_id = current_user.user_id
 
@@ -38,7 +38,7 @@ async def add_product_to_cart_endpoint(data: CartItemCreate,
 @router.get("/my/items", response_model=list[CartItemResponse], summary="Get My Cart Items")
 async def get_all_cart_items_endpoint(
         cart_service: Annotated[CartService, Depends(get_cart_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     return await cart_service.get_all_cart_items(current_user.user_id)
 
@@ -47,7 +47,7 @@ async def get_all_cart_items_endpoint(
 async def delete_cart_item_endpoint(
         cart_item_id: int,
         cart_item_service: Annotated[CartItemService, Depends(get_cart_item_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         await cart_item_service.delete_cart_item(current_user.user_id, cart_item_id)
@@ -64,7 +64,7 @@ async def set_cart_item_quantity_endpoint(
         cart_item_id: int,
         data: CartItemUpdate,
         service: Annotated[CartItemService, Depends(get_cart_item_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         await service.set_cart_item_quantity(current_user.user_id, cart_item_id, data.quantity)

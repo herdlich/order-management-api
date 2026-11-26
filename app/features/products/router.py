@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.dependencies import get_current_user, get_product_service
+from app.api.dependencies import CurrentUser, get_product_service
 from app.exceptions.base import (
     NonExistentPageError,
     NoPermissionError,
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.post("", response_model=ProductResponse, summary="Create Product")
 async def create_product_endpoint(data: ProductCreate, service: Annotated[ProductService, Depends(get_product_service)],
-                                  current_user: Annotated[dict, Depends(get_current_user)]):
+                                  current_user: CurrentUser):
     try:
         return await service.create_product(data, current_user.user_id)
 
@@ -85,7 +85,7 @@ async def update_product_endpoint(
         product_id: int,
         data: ProductUpdate,
         service: Annotated[ProductService, Depends(get_product_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         return await service.update_product(product_id, data, current_user.user_id)
@@ -101,7 +101,7 @@ async def update_product_endpoint(
 async def archive_product_endpoint(
         product_id: int,
         service: Annotated[ProductService, Depends(get_product_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         await service.archive_product(current_user.user_id, product_id)
@@ -125,7 +125,7 @@ async def archive_product_endpoint(
 async def unarchive_product_endpoint(
         product_id: int,
         service: Annotated[ProductService, Depends(get_product_service)],
-        current_user: Annotated[dict, Depends(get_current_user)],
+        current_user: CurrentUser,
 ):
     try:
         return await service.unarchive_product(current_user.user_id, product_id)

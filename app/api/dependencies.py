@@ -12,6 +12,7 @@ from app.features.orders.repository import OrderDatabase
 from app.features.orders.services import OrderService
 from app.features.products.repository import ProductDatabase
 from app.features.products.services import ProductService
+from app.features.users.models import User
 from app.features.users.repository import UserDatabase
 from app.features.users.services import UserService
 from app.security.jwt_tokens import oauth2_scheme
@@ -28,6 +29,9 @@ async def get_current_user(
     user = await service.get_user_by_token(token)
 
     return user
+
+
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 async def get_user_service(session: Annotated[AsyncSession, Depends(get_session)],

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.api.dependencies import get_current_user, get_user_service
+from app.api.dependencies import CurrentUser, get_user_service
 from app.exceptions.base import (
     EmailAlreadyExistsError,
     InvalidCredentialsError,
@@ -59,7 +59,7 @@ async def login_user_endpoint(form_data: Annotated[OAuth2PasswordRequestForm, De
         )
 
 @router.get("/auth_check")
-async def user_auth_check_by_token(current_user: Annotated[dict, Depends(get_current_user)]):
+async def user_auth_check_by_token(current_user: CurrentUser):
     return {
         "username": current_user.username,
         "role": current_user.role,
