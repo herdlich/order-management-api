@@ -6,12 +6,12 @@ from app.api.dependencies import get_current_user, get_product_service
 from app.exceptions.base import (
     NonExistentPageError,
     NoPermissionError,
+    PageSizeMustBeGreaterThanZeroError,
     ProductAlreadyArchivedError,
     ProductAlreadyExistsError,
     ProductNotFoundError,
     ProductNotInArchiveError,
     UnknownProductCreateError,
-    PageSizeMustBeGreaterThanZeroError,
 )
 from app.features.products.schemas import ProductCreate, ProductResponse, ProductUpdate
 from app.features.products.services import ProductService

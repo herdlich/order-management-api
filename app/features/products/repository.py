@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.enums import ProductStatus
 from app.exceptions.base import (
     NonExistentPageError,
+    PageSizeMustBeGreaterThanZeroError,
     ProductAlreadyExistsError,
     ProductNotFoundError,
-    PageSizeMustBeGreaterThanZeroError,
 )
 from app.features.cart_items.models import CartItem
 from app.features.products.models import Product
