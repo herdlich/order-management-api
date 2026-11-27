@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Numeric, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 from app.enums import OrderStatus
@@ -26,6 +26,10 @@ class Order(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
+    )
+
+    items: Mapped[list["OrderItem"]] = relationship(
+        back_populates="order",
     )
 
     __table_args__ = (
@@ -56,6 +60,10 @@ class OrderItem(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
+    )
+
+    order: Mapped["Order"] = relationship(
+        back_populates="items",
     )
 
     __table_args__ = (

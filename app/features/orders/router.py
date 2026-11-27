@@ -67,6 +67,22 @@ async def get_all_orders_endpoint(
     return await service.get_all_orders(current_user.user_id)
 
 
+@router.get("/my/{order_id}/detail")
+async def get_detail_order_endpoint(
+        order_id: int,
+        service: Annotated[OrderService, Depends(get_order_service)],
+        current_user: CurrentUser,
+):
+    try:
+        return await service.get_detail_order(current_user.user_id, order_id)
+
+    except OrderNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Order with id {order_id} not found",
+        )
+
+
 @router.post("/{order_id}/cancel", response_model=OrderResponse, summary="Cancel Order")
 async def cancel_order_endpoint(
         order_id: int,

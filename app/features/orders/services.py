@@ -101,6 +101,14 @@ class OrderService:
 
         return orders
 
+    async def get_detail_order(self, user_id: int, order_id: int) -> Order | None:
+        order = await self.order_repository.get_order_with_items(self.session, user_id, order_id)
+
+        if not order:
+            raise OrderNotFoundError
+
+        return order
+
     async def cancel_order(self, user_id: int, order_id: int):
         try:
             order = await self.order_repository.get_order_by_id(self.session, user_id, order_id)
